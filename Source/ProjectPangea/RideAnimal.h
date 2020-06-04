@@ -62,10 +62,8 @@ public:
 	void SaveInitialStates();
 	void UpdateIsRiding();
 	void SetupMountState();
-	void SetInitialRiderRotation();
 	void SetupDismountState();
 	void SetDismountedPositions();
 	void UpdateIsGrounded();
 	void FlyingSpecificMotion();
-	void UpdateRiderPosAndRot();
 };

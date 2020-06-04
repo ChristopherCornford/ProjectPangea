@@ -23,7 +23,6 @@ void URideAnimal::BeginPlay()
 	Super::BeginPlay();
 
 	AnimalMotion = GetOwner()->FindComponentByClass<UAnimalMotion>();
-	//RidingRegionTriggerBox = AnimalMotion->GetInteractionRegionTriggerBox();
 
 	SaveInitialStates(); //Only called once
 
@@ -72,7 +71,6 @@ void URideAnimal::UpdateIsRiding()
 
 				if (AnimalFlying == On)
 				{
-					GetOwner()->FindComponentByClass<UCharacterMovementComponent>()->GravityScale = 0.0f;
 					GetOwner()->FindComponentByClass<UCharacterMovementComponent>()->SetMovementMode(MOVE_Flying);
 				}
 			}
@@ -90,7 +88,6 @@ void URideAnimal::UpdateIsRiding()
 
 			if (AnimalFlying == On)
 			{
-				GetOwner()->FindComponentByClass<UCharacterMovementComponent>()->GravityScale = 1.0f;
 				GetOwner()->FindComponentByClass<UCharacterMovementComponent>()->SetMovementMode(MOVE_Walking);
 			}
 		}
@@ -164,21 +161,22 @@ void URideAnimal::UpdateIsGrounded()
 }
 void URideAnimal::FlyingSpecificMotion()
 {
-	UStaticMeshComponent* AnimalStaticMeshComponent = Cast<UStaticMeshComponent>(GetOwner()->GetRootComponent());
-
-	if (GetWorld()->GetFirstPlayerController()->IsInputKeyDown("up") ||
-		GetWorld()->GetFirstPlayerController()->IsInputKeyDown("down"))
+	if (!GetWorld()->GetFirstPlayerController()->IsInputKeyDown("up")
+		&& !GetWorld()->GetFirstPlayerController()->IsInputKeyDown("down"))
 	{
-		//GetOwner()->SetActorLocation(GetOwner()->GetActorLocation() + (AnimalFlyingSpeed * GetOwner()->GetActorForwardVector()));
+		GetOwner()->FindComponentByClass<UCharacterMovementComponent>()->Velocity.X = 0.0f;
+		GetOwner()->FindComponentByClass<UCharacterMovementComponent>()->Velocity.Y = 0.0f;
 	}
 	if (GetWorld()->GetFirstPlayerController()->IsInputKeyDown("F"))
 	{
-		//AnimalStaticMeshComponent->AddForce(FVector(0.0f, 0.0f, 1.0f) * AnimalStaticMeshComponent->GetMass());
-		//GetOwner()->SetActorLocation(GetOwner()->GetActorLocation() + FVector(0.0f, 0.0f, 5.0f));
+		GetOwner()->FindComponentByClass<UCharacterMovementComponent>()->Velocity.Z = 150.0f;
 	}
-	if (GetWorld()->GetFirstPlayerController()->IsInputKeyDown("V"))
+	else if (GetWorld()->GetFirstPlayerController()->IsInputKeyDown("V"))
 	{
-		//AnimalStaticMeshComponent->AddForce(FVector(0.0f, 0.0f, -1.0f) * AnimalStaticMeshComponent->GetMass());
-		//GetOwner()->SetActorLocation(GetOwner()->GetActorLocation() - FVector(0.0f, 0.0f, 5.0f));
+		GetOwner()->FindComponentByClass<UCharacterMovementComponent>()->Velocity.Z = -150.0f;
+	}
+	else
+	{
+		GetOwner()->FindComponentByClass<UCharacterMovementComponent>()->Velocity.Z = 0.0f;
 	}
 }
