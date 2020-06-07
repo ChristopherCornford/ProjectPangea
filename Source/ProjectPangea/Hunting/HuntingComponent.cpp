@@ -5,6 +5,7 @@
 #include "Components/InputComponent.h"
 #include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
+#include "Interfaces/Interactuable.h"
 //Removed later
 #include "DrawDebugHelpers.h"
 
@@ -18,6 +19,7 @@ UHuntingComponent::UHuntingComponent()
   owning_actor_ = nullptr;
   damage_ = 24.0f;
   range_ = 400.0f;
+  overlapped_actor_ = nullptr;
 }
 
 
@@ -26,6 +28,7 @@ void UHuntingComponent::BeginPlay()
 {
   Super::BeginPlay();
 
+  
   owning_actor_ = Cast<ACharacter>(GetOwner());
 
   UInputComponent* inputcomp = Cast<UInputComponent>(
@@ -33,11 +36,15 @@ void UHuntingComponent::BeginPlay()
 
   if (inputcomp != nullptr) {
     inputcomp->BindAction("Attack", IE_Pressed, this, &UHuntingComponent::MeleeAttack);
+    inputcomp->BindAction("Interact", IE_Pressed, this, &UHuntingComponent::Interact);
+  
   }
 
   camera_transform_ = Cast<USceneComponent>(
     owning_actor_->FindComponentByClass(UCameraComponent::StaticClass()));
-	
+
+  owning_actor_->OnActorBeginOverlap.AddDynamic(this, &UHuntingComponent::OverlapBegin);
+  owning_actor_->OnActorEndOverlap.AddDynamic(this, &UHuntingComponent::OverlapEnd);
 }
 
 
@@ -80,4 +87,20 @@ void UHuntingComponent::MeleeAttack(){
         nullptr, owning_actor_);
     }
   }
+}
+
+void UHuntingComponent::Interact(){
+  if (overlapped_actor_ != nullptr) {
+    IInteractuable::Execute_Interact(overlapped_actor_);
+  }
+}
+
+void UHuntingComponent::OverlapBegin(AActor * OverlappedActor, AActor * OtherActor){
+  if (OtherActor->GetClass()->ImplementsInterface(UInteractuable::StaticClass())) {
+    overlapped_actor_ = OtherActor;
+  }
+}
+
+void UHuntingComponent::OverlapEnd(AActor * OverlappedActor, AActor * OtherActor) {
+  if (OtherActor == overlapped_actor_) overlapped_actor_ = nullptr;
 }

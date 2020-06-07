@@ -33,9 +33,17 @@ public:
 
   UFUNCTION()
     void MeleeAttack();
+  
+  UFUNCTION()
+    void Interact();
+
+  UFUNCTION()
+    void OverlapBegin(AActor* OverlappedActor, AActor* OtherActor);
+  UFUNCTION()
+  void OverlapEnd(AActor* OverlappedActor, AActor* OtherActor);
 
 private:
-
+  AActor *overlapped_actor_;
   ACharacter* owning_actor_;
   USceneComponent* camera_transform_;
 };
