@@ -99,6 +99,8 @@ void UHuntingComponent::OverlapBegin(AActor * OverlappedActor, AActor * OtherAct
   if (OtherActor->GetClass()->ImplementsInterface(UInteractuable::StaticClass())) {
     overlapped_actor_ = OtherActor;
   }
+
+  
 }
 
 void UHuntingComponent::OverlapEnd(AActor * OverlappedActor, AActor * OtherActor) {

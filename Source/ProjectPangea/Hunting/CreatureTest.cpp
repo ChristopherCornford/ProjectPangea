@@ -13,7 +13,6 @@ ACreatureTest::ACreatureTest()
   RootComponent = sm_comp;
 
   health_ = 100.0f;
-
 }
 
 // Called when the game starts or when spawned
@@ -21,6 +20,8 @@ void ACreatureTest::BeginPlay()
 {
 	Super::BeginPlay();
 	
+  GetWorldTimerManager()->SetTimet()
+
 }
 
 // Called every frame

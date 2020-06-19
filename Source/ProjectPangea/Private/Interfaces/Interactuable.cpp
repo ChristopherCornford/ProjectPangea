@@ -1,4 +1,4 @@
-// Author: Gabriel Rodríguez Viana <rodriguezvi2esat-alumni.com>
+// Author: Pablo Bengoa Nagy <p.bengoanagy@gmail.com>
 
 #include "Interfaces/Interactuable.h"
 
