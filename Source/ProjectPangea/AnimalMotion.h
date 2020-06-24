@@ -40,6 +40,7 @@ private:
 	bool IsExhausted = false;
 	bool IsRiding = false;
 	bool IsGrounded = true;
+	bool IsTrapped = false;
 
 	//Tamed
 	UPROPERTY(EditAnywhere)
@@ -106,11 +107,13 @@ public:
 	bool GetIsExhausted();
 	bool GetIsRiding();
 	bool GetIsGrounded();
+	bool GetIsTrapped();
 	void SetIsTamed(bool InputBool);
 	void SetIsAlerted(bool InputBool);
 	void SetIsExhausted(bool InputBool);
 	void SetIsRiding(bool InputBool);
 	void SetIsGrounded(bool InputBool);
+	void SetIsTrapped(bool InputBool);
 
 	//Movement General
 	FVector GetAnimalToPlayerVector();
@@ -126,8 +129,9 @@ public:
 	float GetExhaustionIncrSpeed();
 	float GetExhaustionDecrSpeed();
 	float GetMaxExhaustion();
-	void SetExhaustion(int InputInt);
+	void SetExhaustion(float InputFloat);
 	void IncrementExhaustion();
+	void IncrementExhaustion(float ManualIncrValue);
 	void DecrementExhaustion();
 
 	//Chasing

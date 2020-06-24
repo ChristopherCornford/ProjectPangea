@@ -84,8 +84,6 @@ void URideAnimal::UpdateIsRiding()
 
 			SetupDismountState();
 
-			//CAMERA SHOULDN'T CHANGE DIRECTION ON DISMOUNT
-
 			if (AnimalFlying == On)
 			{
 				GetOwner()->FindComponentByClass<UCharacterMovementComponent>()->SetMovementMode(MOVE_Walking);
@@ -95,10 +93,20 @@ void URideAnimal::UpdateIsRiding()
 }
 void URideAnimal::SetupMountState()
 {
+	//Save initial camera angle/location
+	float DismountedCameraYaw = GetWorld()->GetFirstPlayerController()->GetPawn()->
+		FindComponentByClass<UCameraComponent>()->GetComponentRotation().Yaw;
+
+	//Unpossess and Possess
 	PlayerCharacter->SetActorEnableCollision(false);
 	GetWorld()->GetFirstPlayerController()->UnPossess();
 	//MAYBE AI CONTROLLER NEEDS TO UNPOSSESS CHARACTER FIRST TOO ONCE AI IS ADDED?
 	GetWorld()->GetFirstPlayerController()->Possess(Cast<APawn>(GetOwner()));
+
+	//Setup new camera angle/location
+	FRotator NewCameraRotation = GetWorld()->GetFirstPlayerController()->GetControlRotation();
+	NewCameraRotation.Yaw = DismountedCameraYaw;
+	GetWorld()->GetFirstPlayerController()->SetControlRotation(NewCameraRotation);
 
 	//Mounting Player Animation
 	PlayerCharacter->GetMesh()->PlayAnimation(Cast<UAnimationAsset>(RidingAnimation), true);
@@ -117,9 +125,19 @@ void URideAnimal::SetupMountState()
 }
 void URideAnimal::SetupDismountState()
 {
+	//Save initial camera angle/location
+	float RidingCameraYaw = GetWorld()->GetFirstPlayerController()->GetPawn()->
+		FindComponentByClass<UCameraComponent>()->GetComponentRotation().Yaw;
+
+	//Unpossess and Possess
 	PlayerCharacter->SetActorEnableCollision(true);
 	GetWorld()->GetFirstPlayerController()->UnPossess();
 	GetWorld()->GetFirstPlayerController()->Possess(PlayerPawn);
+
+	//Setup new camera angle/location
+	FRotator NewCameraRotation = GetWorld()->GetFirstPlayerController()->GetControlRotation();
+	NewCameraRotation.Yaw = RidingCameraYaw;
+	GetWorld()->GetFirstPlayerController()->SetControlRotation(NewCameraRotation);
 
 	//Dismounting Player Animation
 	PlayerCharacter->GetMesh()->PlayAnimation(Cast<UAnimationAsset>(StandingAnimation), true);
@@ -179,4 +197,10 @@ void URideAnimal::FlyingSpecificMotion()
 	{
 		GetOwner()->FindComponentByClass<UCharacterMovementComponent>()->Velocity.Z = 0.0f;
 	}
+}
+
+//Other
+bool URideAnimal::ExtGetIsRiding()
+{
+	return AnimalMotion->GetIsRiding();
 }

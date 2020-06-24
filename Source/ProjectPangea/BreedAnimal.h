@@ -76,7 +76,4 @@ public:
 		void OnOverlapEnd(UPrimitiveComponent* OverlappedActor,
 			AActor* OtherActor, UPrimitiveComponent* OtherComponent,
 			int32 OtherBodyIndex);
-
-	//Temporary output log
-	void PrintIsPregnant();
 };

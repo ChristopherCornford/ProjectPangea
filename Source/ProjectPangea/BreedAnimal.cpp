@@ -44,11 +44,11 @@ void UBreedAnimal::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 		}*/
 		if (IsValidMateWithinRange)
 		{
-			UE_LOG(LogTemp, Log, TEXT("Mate Within Range"));
+			//UE_LOG(LogTemp, Log, TEXT("Mate Within Range"));
 		}
 		else
 		{
-			UE_LOG(LogTemp, Log, TEXT("NO Mate Within Range"));
+			//UE_LOG(LogTemp, Log, TEXT("NO Mate Within Range"));
 		}
 	}
 }
@@ -65,9 +65,9 @@ void UBreedAnimal::SpawnBaby()
 {
 	//TODO If that location is not available, need an alternate location so that spawn isn't cancelled?
 	//Maybe do via a check to see if the SpawnedBaby Character is NULL or not?
-	FVector LocationTemp = GetOwner()->GetActorLocation() + (100.0f * GetOwner()->GetActorRightVector());
-	FRotator RotationTemp = GetOwner()->GetActorRotation();
-	SpawnedBaby = Cast<ACharacter>(GetWorld()->SpawnActor(BabyToSpawn, &LocationTemp, &RotationTemp));
+	FVector SpawnLocation = GetOwner()->GetActorLocation() + (100.0f * GetOwner()->GetActorRightVector());
+	FRotator SpawnRotation = GetOwner()->GetActorRotation();
+	SpawnedBaby = Cast<ACharacter>(GetWorld()->SpawnActor(BabyToSpawn, &SpawnLocation, &SpawnRotation));
 	SpawnedBaby->SetActorRelativeScale3D(SpawnedBaby->GetActorRelativeScale3D() / 1.5f);
 	SpawnedBaby->SetActorLocation(SpawnedBaby->GetActorLocation() - FVector(0.0f, 0.0f, 30.0f));
 	int NUM_TEMP = FMath::FRandRange(0, 2);

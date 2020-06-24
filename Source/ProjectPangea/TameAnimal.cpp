@@ -44,7 +44,7 @@ void UTameAnimal::UpdateIsTamed()
 {
 	if (GetWorld()->GetFirstPlayerController()->WasInputKeyJustPressed("T"))
 	{
-		if ((!AnimalMotion->GetIsTamed() && !AnimalMotion->GetIsAlerted() && !AnimalMotion->GetIsExhausted()) ||
+		if (//(!AnimalMotion->GetIsTamed() && !AnimalMotion->GetIsAlerted() && !AnimalMotion->GetIsExhausted()) ||
 			(!AnimalMotion->GetIsTamed() && AnimalMotion->GetIsAlerted() && AnimalMotion->GetIsExhausted()))
 		{
 			if (AnimalMotion->GetAnimalToPlayerVector().Size() < TamingRegionDistance)

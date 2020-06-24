@@ -7,6 +7,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Camera/CameraComponent.h"
 #include "AnimalMotion.h"
 #include "RideAnimal.generated.h"
 
@@ -60,10 +61,17 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void SaveInitialStates();
+
+	//Riding general
 	void UpdateIsRiding();
 	void SetupMountState();
 	void SetupDismountState();
 	void SetDismountedPositions();
+
+	//Flying specific
 	void UpdateIsGrounded();
 	void FlyingSpecificMotion();
+
+	//Other
+	bool ExtGetIsRiding();
 };

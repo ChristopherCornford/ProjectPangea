@@ -169,7 +169,7 @@ float UAnimalMotion::KeepWithinAngleRange(float InputAngle, float UpperLimit, fl
 }
 float UAnimalMotion::CalcTurnDirection(float InputAngle)
 {
-	float TurnDirectionMultiplier;
+	float TurnDirectionMultiplier = 1.0f;
 	if (InputAngle < 0.0f)
 	{
 		//ANTI-CLOCKWISE
@@ -213,6 +213,10 @@ bool UAnimalMotion::GetIsGrounded()
 {
 	return IsGrounded;
 }
+bool UAnimalMotion::GetIsTrapped()
+{
+	return IsTrapped;
+}
 void UAnimalMotion::SetIsTamed(bool InputBool)
 {
 	IsTamed = InputBool;
@@ -232,6 +236,10 @@ void UAnimalMotion::SetIsRiding(bool InputBool)
 void UAnimalMotion::SetIsGrounded(bool InputBool)
 {
 	IsGrounded = InputBool;
+}
+void UAnimalMotion::SetIsTrapped(bool InputBool)
+{
+	IsTrapped = InputBool;
 }
 
 //Movement General
@@ -277,13 +285,17 @@ float UAnimalMotion::GetMaxExhaustion()
 {
 	return MaxExhaustion;
 }
-void UAnimalMotion::SetExhaustion(int InputInt)
+void UAnimalMotion::SetExhaustion(float InputFloat)
 {
-	Exhaustion = InputInt;
+	Exhaustion = InputFloat;
 }
 void UAnimalMotion::IncrementExhaustion()
 {
 	Exhaustion += ExhaustionIncrSpeed;
+}
+void UAnimalMotion::IncrementExhaustion(float ManualIncrValue)
+{
+	Exhaustion += ManualIncrValue;
 }
 void UAnimalMotion::DecrementExhaustion()
 {
