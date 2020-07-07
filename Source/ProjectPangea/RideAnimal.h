@@ -9,6 +9,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Camera/CameraComponent.h"
 #include "AnimalMotion.h"
+#include "RidingPrecedence.h"
+#include "PlayerStateTracker.h"
 #include "RideAnimal.generated.h"
 
 
@@ -55,6 +57,11 @@ private:
 		float MaximumFlyingDismountHeight = 300.0f;
 
 	UAnimalMotion* AnimalMotion;
+	URidingPrecedence* RidingPrecedence;
+	UPlayerStateTracker* PlayerStateTracker;
+
+	bool WasRideRequestSent = false;
+	bool IsRideRequestFinished = false;
 
 public:
 	// Called every frame
@@ -64,6 +71,7 @@ public:
 
 	//Riding general
 	void UpdateIsRiding();
+	void OnReceivedRequest();
 	void SetupMountState();
 	void SetupDismountState();
 	void SetDismountedPositions();
@@ -74,4 +82,6 @@ public:
 
 	//Other
 	bool ExtGetIsRiding();
+
+	bool CheckRideRequestProgress();
 };

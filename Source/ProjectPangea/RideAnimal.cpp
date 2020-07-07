@@ -23,6 +23,8 @@ void URideAnimal::BeginPlay()
 	Super::BeginPlay();
 
 	AnimalMotion = GetOwner()->FindComponentByClass<UAnimalMotion>();
+	RidingPrecedence = GetWorld()->GetFirstPlayerController()->GetPawn()->FindComponentByClass<URidingPrecedence>();
+	PlayerStateTracker = GetWorld()->GetFirstPlayerController()->GetPawn()->FindComponentByClass<UPlayerStateTracker>();
 
 	SaveInitialStates(); //Only called once
 
@@ -47,6 +49,31 @@ void URideAnimal::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 		UpdateIsGrounded();
 		FlyingSpecificMotion();
 	}
+
+	if (WasRideRequestSent)
+	{
+		//UE_LOG(LogTemp, Log, TEXT("RA. WasRideRequestSent = true"));
+		if (CheckRideRequestProgress())
+		{
+			UE_LOG(LogTemp, Log, TEXT("RA. CheckRideRequestProgress = true"));
+			if (RidingPrecedence->GetRideAnimal().X < GetOwner()->GetActorLocation().X + 0.05 &&
+				RidingPrecedence->GetRideAnimal().X > GetOwner()->GetActorLocation().X - 0.05 &&
+				RidingPrecedence->GetRideAnimal().Y < GetOwner()->GetActorLocation().Y + 0.05 &&
+				RidingPrecedence->GetRideAnimal().Y > GetOwner()->GetActorLocation().Y - 0.05)
+			{
+				UE_LOG(LogTemp, Log, TEXT("RA. This is the animal that will be ridden!"));
+				OnReceivedRequest();
+				RidingPrecedence->ResetAll();
+				UE_LOG(LogTemp, Log, TEXT("*********************************************************"))
+				WasRideRequestSent = false;
+			}
+			else
+			{
+				UE_LOG(LogTemp, Log, TEXT("RA. This animal is not the closest, so riding has been cancelled!"));
+				WasRideRequestSent = false;
+			}
+		}
+	}
 }
 
 void URideAnimal::SaveInitialStates()
@@ -59,19 +86,16 @@ void URideAnimal::SaveInitialStates()
 //Riding general
 void URideAnimal::UpdateIsRiding()
 {
-	if (AnimalMotion->GetIsTamed() && !AnimalMotion->GetIsRiding())
+	if (AnimalMotion->GetIsTamed() && !AnimalMotion->GetIsRiding() && !PlayerStateTracker->GetIsPlayerRiding())
 	{
-		if (AnimalMotion->GetAnimalToPlayerVector().Size() < RidingRegionDistance)
+		if (!PlayerStateTracker->GetDidJustDismount())
 		{
-			if (GetWorld()->GetFirstPlayerController()->WasInputKeyJustPressed("R"))
+			if (AnimalMotion->GetAnimalToPlayerVector().Size() < RidingRegionDistance)
 			{
-				AnimalMotion->SetIsRiding(true);
-
-				SetupMountState();
-
-				if (AnimalFlying == On)
+				if (GetWorld()->GetFirstPlayerController()->WasInputKeyJustPressed("R"))
 				{
-					GetOwner()->FindComponentByClass<UCharacterMovementComponent>()->SetMovementMode(MOVE_Flying);
+					RidingPrecedence->AddRideRequest(GetOwner()->GetActorLocation(), AnimalMotion->GetAnimalToPlayerVector().Size());
+					WasRideRequestSent = true;
 				}
 			}
 		}
@@ -81,6 +105,8 @@ void URideAnimal::UpdateIsRiding()
 		if (GetWorld()->GetFirstPlayerController()->WasInputKeyJustPressed("R"))
 		{
 			AnimalMotion->SetIsRiding(false);
+			PlayerStateTracker->SetIsPlayerRiding(false);
+			PlayerStateTracker->SetDidJustDismount(true);
 
 			SetupDismountState();
 
@@ -89,6 +115,18 @@ void URideAnimal::UpdateIsRiding()
 				GetOwner()->FindComponentByClass<UCharacterMovementComponent>()->SetMovementMode(MOVE_Walking);
 			}
 		}
+	}
+}
+void URideAnimal::OnReceivedRequest()
+{
+	AnimalMotion->SetIsRiding(true);
+	PlayerStateTracker->SetIsPlayerRiding(true);
+
+	SetupMountState();
+
+	if (AnimalFlying == On)
+	{
+		GetOwner()->FindComponentByClass<UCharacterMovementComponent>()->SetMovementMode(MOVE_Flying);
 	}
 }
 void URideAnimal::SetupMountState()
@@ -203,4 +241,9 @@ void URideAnimal::FlyingSpecificMotion()
 bool URideAnimal::ExtGetIsRiding()
 {
 	return AnimalMotion->GetIsRiding();
+}
+
+bool URideAnimal::CheckRideRequestProgress()
+{
+	return RidingPrecedence->GetIsRequestCompleted();
 }

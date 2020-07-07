@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "AnimalMotion.h"
+#include "TamingTracker.h"
 #include "TameAnimal.generated.h"
 
 
@@ -23,6 +24,9 @@ protected:
 
 private:
 	UAnimalMotion* AnimalMotion;
+	UTamingTracker* TamingTracker;
+
+	FString TamingTag;
 
 	UPROPERTY(EditAnywhere)
 		float TamingRegionDistance = 200.0f;

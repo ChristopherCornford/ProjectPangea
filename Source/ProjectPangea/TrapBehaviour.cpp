@@ -26,6 +26,32 @@ void UTrapBehaviour::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (IsReadied)
+	{
+		if (Type == RopeNetThrow)
+		{
+			FVector PreppedTrapLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
+			PreppedTrapLocation += (30.0f * GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorForwardVector());
+			PreppedTrapLocation += (15.0f * GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorRightVector());
+			GetOwner()->SetActorLocation(PreppedTrapLocation);
+			GetOwner()->SetActorRotation(GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorRotation());
+			//GetOwner()->SetActorRotation(InitRotation);
+		}
+	}
+	if (IsLaunched)
+	{
+		GetOwner()->SetActorRotation(InitRotation);
+		//FVector NextProjectilePosition = GetOwner()->GetActorLocation() + (GetOwner()->GetActorForwardVector());
+		//GetOwner()->SetActorLocation(NextProjectilePosition);
+		//FVector PlayerToProjectileVector = StartingPoint - GetOwner()->GetActorLocation();
+		//PlayerToProjectileVector = FVector(PlayerToProjectileVector.X, PlayerToProjectileVector.Y, 0.0f);
+		//PlayerToProjectileDistance = PlayerToProjectileVector.Size();
+		//float D = PlayerToProjectileDistance;
+		//float newZ = (D * tan(theta)) - ((g * pow(D, D)) / (2 * pow(v, v) * pow(cos(theta), cos(theta))));
+		//FVector AdjustedProjectileHeightVector = NextProjectilePosition;
+		//AdjustedProjectileHeightVector.Z = newZ;
+		//GetOwner()->SetActorLocation(AdjustedProjectileHeightVector);
+	}
 
 	if (IsTrapped)
 	{
@@ -73,6 +99,23 @@ void UTrapBehaviour::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 void UTrapBehaviour::SetTrapType(TrapType InType)
 {
 	Type = InType;
+}
+
+void UTrapBehaviour::SetIsReadied(bool InputBool)
+{
+	IsReadied = InputBool;
+}
+void UTrapBehaviour::SetIsLaunched(bool InputBool)
+{
+	IsLaunched = InputBool;
+}
+void UTrapBehaviour::SetStartingPoint(FVector InputStartingPoint)
+{
+	StartingPoint = InputStartingPoint;
+}
+void UTrapBehaviour::SetInitRotation(FRotator InputInitRotation)
+{
+	InitRotation = InputInitRotation;
 }
 
 void UTrapBehaviour::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent,

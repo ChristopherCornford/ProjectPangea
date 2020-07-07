@@ -6,6 +6,7 @@
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
 #include "Components/ActorComponent.h"
+#include "Components/PrimitiveComponent.h"
 #include "CableComponent.h"
 #include "TrapClass.h"
 #include "TrapBehaviour.h"
@@ -32,9 +33,13 @@ private:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<AActor> BasicTrapActorToSpawn;
 	UPROPERTY(EditAnywhere)
+		TSubclassOf<AActor> BasicThrownTrapActorToSpawn;
+	UPROPERTY(EditAnywhere)
 		TSubclassOf<AActor> CableTrapActorToSpawn;
 
 	TrapType TypeOfTrapToSpawn;
+
+	AActor* CurrentlyPreparedThrownTrap;
 
 public:	
 	// Called every frame
@@ -47,4 +52,6 @@ public:
 
 	void SpawnTrap(TrapType TrapTypeToSpawn, TSubclassOf<AActor> TrapToSpawn);
 	void SpawnTrapNew(TrapType TrapTypeToSpawn, TSubclassOf<AActor> TrapToSpawn);
+	void SpawnThrownTrap(TrapType TrapTypeToSpawn, TSubclassOf<AActor> TrapToSpawn);
+	void LaunchThrownTrap(AActor* SpawnedTrap);
 };

@@ -31,7 +31,17 @@ private:
 	bool IsTrapped = false;
 	AActor* TrappedActor;
 	FVector TrappedPos;
-	
+
+	bool IsReadied = false;
+	bool IsLaunched = false;
+	FVector StartingPoint;
+	FRotator InitRotation;
+
+	float theta = 0.5;
+	float g = -9.81f;
+	float v = 40.0f;
+	float PlayerToProjectileDistance;
+
 	float RopeNetTrapExhaustionIncr = 5.0f;
 	float WoodenCageExhaustionIncr = 5.0f;
 
@@ -40,6 +50,11 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void SetTrapType(TrapType InType);
+
+	void SetIsReadied(bool InputBool);
+	void SetIsLaunched(bool InputBool);
+	void SetStartingPoint(FVector InputStartingPoint);
+	void SetInitRotation(FRotator InputInitRotation);
 
 	UFUNCTION()
 		void OnOverlapBegin(UPrimitiveComponent* OverlappedActor,

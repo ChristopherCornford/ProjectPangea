@@ -17,6 +17,7 @@ void UTameAnimal::BeginPlay()
 	Super::BeginPlay();
 
 	AnimalMotion = GetOwner()->FindComponentByClass<UAnimalMotion>();
+	TamingTracker = GetWorld()->GetFirstPlayerController()->GetPawn()->FindComponentByClass<UTamingTracker>();
 }
 
 // Called every frame
@@ -50,6 +51,7 @@ void UTameAnimal::UpdateIsTamed()
 			if (AnimalMotion->GetAnimalToPlayerVector().Size() < TamingRegionDistance)
 			{
 				AnimalMotion->SetIsTamed(true);
+				TamingTracker->AddTamedAnimal();
 			}
 		}
 	}

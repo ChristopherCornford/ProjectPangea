@@ -28,7 +28,7 @@ void UAnimalSight::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	//Output Exhaustion to log
-	UE_LOG(LogTemp, Log, TEXT("Exhaustion level: %.1f/%.1f"), AnimalMotion->GetExhaustion(), AnimalMotion->GetMaxExhaustion());
+	//UE_LOG(LogTemp, Log, TEXT("Exhaustion level: %.1f/%.1f"), AnimalMotion->GetExhaustion(), AnimalMotion->GetMaxExhaustion());
 
 	PlayerAngleFromSightCentre = CalcPlayerAngleFromSightCentre();
 

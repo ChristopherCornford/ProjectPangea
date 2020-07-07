@@ -41,8 +41,13 @@ void UTamingTraps::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 	{
 		//ADD AN INVENTORY CHECK TO MAKE SURE THE PLAYER HAS ENOUGH OF THIS TRAP TYPE
 		//{
-			//UseRopeNetThrow();
+			UseRopeNetThrow();
 		//}
+	}
+	if (GetWorld()->GetFirstPlayerController()->WasInputKeyJustReleased("Two"))
+	{
+		LaunchThrownTrap(CurrentlyPreparedThrownTrap);
+		CurrentlyPreparedThrownTrap = NULL;
 	}
 	if (GetWorld()->GetFirstPlayerController()->WasInputKeyJustPressed("Three"))
 	{
@@ -69,9 +74,9 @@ void UTamingTraps::UseRopeLasso()
 }
 void UTamingTraps::UseRopeNetThrow()
 {
-	//UE_LOG(LogTemp, Log, TEXT("Throwing Rope Net"));
-	//TypeOfTrapToSpawn = RopeNetThrow;
-	//SpawnTrapNew(TypeOfTrapToSpawn, BasicTrapActorToSpawn);
+	UE_LOG(LogTemp, Log, TEXT("Throwing Rope Net"));
+	TypeOfTrapToSpawn = RopeNetThrow;
+	SpawnThrownTrap(TypeOfTrapToSpawn, BasicThrownTrapActorToSpawn);
 }
 void UTamingTraps::UseRopeNetTrap()
 {
@@ -113,14 +118,39 @@ void UTamingTraps::SpawnTrap(TrapType TrapTypeToSpawn, TSubclassOf<AActor> TrapT
 	//SpawnedTrap->FindComponentByClass<UTrapBehaviour>()->SetTrapType(TrapTypeToSpawn);
 	//SpawnedTrapList.Add(TrapClass(TrapTypeToSpawn, SpawnedTrap, SpawnedTrapList.Num()));
 }
-
 void UTamingTraps::SpawnTrapNew(TrapType TrapTypeToSpawn, TSubclassOf<AActor> TrapToSpawn)
 {
 	FVector SpawnLocation = GetOwner()->GetActorLocation() + (150.0f * GetOwner()->GetActorForwardVector());
 	SpawnLocation.Z = 35.0f;
 	FRotator SpawnRotation = GetOwner()->GetActorRotation();
-	//FTransform SpawnTransform = GetOwner()->GetActorTransform();
 	AActor* SpawnedTrap = GetWorld()->SpawnActor(TrapToSpawn, &SpawnLocation, &SpawnRotation);
 	SpawnedTrap->FindComponentByClass<UTrapBehaviour>()->SetTrapType(TrapTypeToSpawn);
-	//SpawnedTrap->SetActorLocation(SpawnLocation);
+}
+void UTamingTraps::SpawnThrownTrap(TrapType TrapTypeToSpawn, TSubclassOf<AActor> TrapToSpawn)
+{
+	FVector SpawnLocation = GetOwner()->GetActorLocation() + (30.0f * GetOwner()->GetActorForwardVector());
+	SpawnLocation += (15.0f * GetOwner()->GetActorRightVector());
+	SpawnLocation.Z = 100.0f;
+	FRotator SpawnRotation = GetOwner()->GetActorRotation();
+	AActor* SpawnedTrap = GetWorld()->SpawnActor(TrapToSpawn, &SpawnLocation, &SpawnRotation);
+	SpawnedTrap->FindComponentByClass<UTrapBehaviour>()->SetTrapType(TrapTypeToSpawn);
+	SpawnedTrap->FindComponentByClass<UTrapBehaviour>()->SetIsReadied(true);
+	CurrentlyPreparedThrownTrap = SpawnedTrap;
+}
+void UTamingTraps::LaunchThrownTrap(AActor* SpawnedTrap)
+{
+	UE_LOG(LogTemp, Log, TEXT("LAUNCHED HOLLA!"));
+	SpawnedTrap->FindComponentByClass<UTrapBehaviour>()->SetIsReadied(false);
+	//Actually Launch Trap
+	SpawnedTrap->FindComponentByClass<UTrapBehaviour>()->SetIsLaunched(true);
+	SpawnedTrap->FindComponentByClass<UTrapBehaviour>()->SetStartingPoint(SpawnedTrap->GetActorLocation());
+	SpawnedTrap->FindComponentByClass<UTrapBehaviour>()->SetInitRotation(SpawnedTrap->GetActorRotation());
+	FVector TempLaunchVector = FVector(GetOwner()->GetActorForwardVector());
+	TempLaunchVector.Z += 50.0f;
+	TempLaunchVector * 100000000000000.0f;
+	SpawnedTrap->FindComponentByClass<UPrimitiveComponent>()->AddForce(TempLaunchVector);
+	SpawnedTrap->FindComponentByClass<UBoxComponent>()->SetRelativeScale3D(FVector(3.0f, 3.0f, 3.0f));
+
+	//Overlap set up in TrapBehaviour,
+	//Destroy if hit floor can be added to TrapBehaviour if z of trap (GetOwner can be used in that class), is less than a set value, GetOwner()->Destro()y.
 }
