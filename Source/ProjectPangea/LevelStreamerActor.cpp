@@ -13,6 +13,9 @@ ALevelStreamerActor::ALevelStreamerActor()
     RootComponent = OverlapVolume;
 
     OverlapVolume->OnComponentBeginOverlap.AddUniqueDynamic(this, &ALevelStreamerActor::OverlapBegins);
+
+    isInZone = false;
+    //ALevelStreamerActor::isInZone = false;
 }
 
 // Called when the game starts or when spawned
@@ -36,6 +39,13 @@ void ALevelStreamerActor::OverlapBegins(UPrimitiveComponent* OverlappedComponent
     ACharacter* MyCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
     if (OtherActor == (AActor*)MyCharacter && LevelToLoad != "")
     {
+        isInZone = true;
+
+        FString debugStr = FString(TEXT("Enter room!"));
+        UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
+        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, debugStr);
+
+        // loading
         FLatentActionInfo LatentInfo;
         UGameplayStatics::LoadStreamLevel(this, LevelToLoad, true, true, LatentInfo);
     }

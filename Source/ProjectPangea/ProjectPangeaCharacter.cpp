@@ -56,6 +56,8 @@ void AProjectPangeaCharacter::SetupPlayerInputComponent(class UInputComponent* P
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+    PlayerInputComponent->BindAction("EnterRoom", IE_Pressed, this, &AProjectPangeaCharacter::EnterRoom);
+    PlayerInputComponent->BindAction("EnterRoom", IE_Released, this, &AProjectPangeaCharacter::ExitRoom);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AProjectPangeaCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AProjectPangeaCharacter::MoveRight);
@@ -131,4 +133,26 @@ void AProjectPangeaCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
+}
+
+
+
+void AProjectPangeaCharacter::EnterRoom()
+{
+    //ALevelStreamerActor::isInZone = true;
+    FString debugStr = FString(TEXT("Enter room!"));
+    debugStr += FString(TEXT("\n\t")) + FString(TEXT("LevelStreamingActor->isInZone: ")) + (LevelStreamingActor->isInZone ? TEXT("true") : TEXT("false"));
+    UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
+    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, debugStr);
+}
+
+
+
+void AProjectPangeaCharacter::ExitRoom()
+{
+    //ALevelStreamerActor::isInZone = false;
+    FString debugStr = FString(TEXT("Exit room!"));
+    debugStr += FString(TEXT("\n\t")) + FString(TEXT("LevelStreamingActor->isInZone: ")) + (LevelStreamingActor->isInZone ? TEXT("true") : TEXT("false"));
+    UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
+    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, debugStr);
 }

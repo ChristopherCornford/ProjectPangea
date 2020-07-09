@@ -25,6 +25,9 @@ public:
 	// Sets default values for this actor's properties
 	ALevelStreamerActor();
 
+    //static bool isInZone;
+    bool isInZone;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
