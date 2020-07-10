@@ -56,8 +56,9 @@ void AProjectPangeaCharacter::SetupPlayerInputComponent(class UInputComponent* P
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-    PlayerInputComponent->BindAction("EnterRoom", IE_Pressed, this, &AProjectPangeaCharacter::EnterRoom);
-    PlayerInputComponent->BindAction("EnterRoom", IE_Released, this, &AProjectPangeaCharacter::ExitRoom);
+    PlayerInputComponent->BindAction("EnterRoom", IE_Pressed, this, &AProjectPangeaCharacter::EnterRoom); 
+    //PlayerInputComponent->BindAction("EnterRoom", IE_Released, this, &AProjectPangeaCharacter::ExitRoom);
+    PlayerInputComponent->BindAction("ExitRoom", IE_Pressed, this, &AProjectPangeaCharacter::ExitRoom);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AProjectPangeaCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AProjectPangeaCharacter::MoveRight);
@@ -139,20 +140,35 @@ void AProjectPangeaCharacter::MoveRight(float Value)
 
 void AProjectPangeaCharacter::EnterRoom()
 {
-    //ALevelStreamerActor::isInZone = true;
-    FString debugStr = FString(TEXT("Enter room!"));
+    // TODO: test for LevelStreamingActor being set
+
+    FString debugStr = FString(TEXT("Opening room!"));
     debugStr += FString(TEXT("\n\t")) + FString(TEXT("LevelStreamingActor->isInZone: ")) + (LevelStreamingActor->isInZone ? TEXT("true") : TEXT("false"));
     UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
     GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, debugStr);
+
+    // loading
+    if (LevelStreamingActor->isInZone && LevelStreamingActor->LevelToLoad != "")
+    {
+        FLatentActionInfo LatentInfo;
+        UGameplayStatics::LoadStreamLevel(this, LevelStreamingActor->LevelToLoad, true, true, LatentInfo);
+    }
 }
 
 
 
 void AProjectPangeaCharacter::ExitRoom()
 {
-    //ALevelStreamerActor::isInZone = false;
-    FString debugStr = FString(TEXT("Exit room!"));
+    FString debugStr = FString(TEXT("Closing room!"));
     debugStr += FString(TEXT("\n\t")) + FString(TEXT("LevelStreamingActor->isInZone: ")) + (LevelStreamingActor->isInZone ? TEXT("true") : TEXT("false"));
     UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
     GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, debugStr);
+
+    // unloading
+    if (!LevelStreamingActor->isInZone && LevelStreamingActor->LevelToLoad != "")
+    {
+        FLatentActionInfo LatentInfo;
+        //UGameplayStatics::UnloadStreamLevel(this, LevelStreamingActor->LevelToLoad, LatentInfo);
+        UGameplayStatics::UnloadStreamLevel(this, LevelStreamingActor->LevelToLoad, LatentInfo, true);
+    }
 }

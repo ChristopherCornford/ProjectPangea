@@ -28,15 +28,17 @@ public:
     //static bool isInZone;
     bool isInZone;
 
+    UPROPERTY(EditAnywhere)
+    FName LevelToLoad;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-    UPROPERTY(EditAnywhere)
-    FName LevelToLoad;
-
     UFUNCTION()
     void OverlapBegins(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+    UFUNCTION()
+    void OverlapEnds(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 public:	
 	// Called every frame

@@ -13,6 +13,7 @@ ALevelStreamerActor::ALevelStreamerActor()
     RootComponent = OverlapVolume;
 
     OverlapVolume->OnComponentBeginOverlap.AddUniqueDynamic(this, &ALevelStreamerActor::OverlapBegins);
+    OverlapVolume->OnComponentEndOverlap.AddUniqueDynamic(this, &ALevelStreamerActor::OverlapEnds);
 
     isInZone = false;
     //ALevelStreamerActor::isInZone = false;
@@ -36,6 +37,10 @@ void ALevelStreamerActor::Tick(float DeltaTime)
 
 void ALevelStreamerActor::OverlapBegins(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
+    FString debugStr = FString(TEXT("Exit check!"));
+    UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
+    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, debugStr);
+
     ACharacter* MyCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
     if (OtherActor == (AActor*)MyCharacter && LevelToLoad != "")
     {
@@ -44,10 +49,25 @@ void ALevelStreamerActor::OverlapBegins(UPrimitiveComponent* OverlappedComponent
         FString debugStr = FString(TEXT("Enter room!"));
         UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
         GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, debugStr);
+    }
+}
 
-        // loading
-        FLatentActionInfo LatentInfo;
-        UGameplayStatics::LoadStreamLevel(this, LevelToLoad, true, true, LatentInfo);
+
+
+void ALevelStreamerActor::OverlapEnds(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+    FString debugStr = FString(TEXT("Exit check!"));
+    UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
+    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, debugStr);
+
+    ACharacter* MyCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
+    if (OtherActor == (AActor*)MyCharacter && LevelToLoad != "")
+    {
+        isInZone = false;
+
+        debugStr = FString(TEXT("Room exited!"));
+        UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
+        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, debugStr);
     }
 }
 
