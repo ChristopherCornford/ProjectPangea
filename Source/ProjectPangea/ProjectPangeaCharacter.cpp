@@ -154,10 +154,8 @@ void AProjectPangeaCharacter::EnterRoom()
         UGameplayStatics::LoadStreamLevel(this, LevelStreamingActor->LevelToLoad, true, true, LatentInfo);
 
         // position change
-        FVector pos_room1 = FVector(-700.0, 90.0, 267.8);
-        FVector pos_room2 = FVector(-160.0, 90.0, 267.8);
-        FRotator rot_room1 = FRotator(0, 0, 180.0);
-        FRotator rot_room2 = FRotator(0, 0, 0);
+        FVector pos_room2 = FVector(-160.0f, 90.0f, 267.8f);
+        FRotator rot_room2 = FRotator(0.0f, 0.0f, 0.0f);
 
         SetActorLocation(pos_room2);
         SetActorRotation(rot_room2);
@@ -173,11 +171,18 @@ void AProjectPangeaCharacter::ExitRoom()
     UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
     GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, debugStr);
 
-    // unloading
     if (!LevelStreamingActor->isInZone && LevelStreamingActor->LevelToLoad != "")
     {
+        // unloading
         FLatentActionInfo LatentInfo;
         //UGameplayStatics::UnloadStreamLevel(this, LevelStreamingActor->LevelToLoad, LatentInfo);
         UGameplayStatics::UnloadStreamLevel(this, LevelStreamingActor->LevelToLoad, LatentInfo, true);
+
+        // position change
+        FVector pos_room1 = FVector(-700.0f, 90.0f, 267.8f);
+        FRotator rot_room1 = FRotator(0.0f, 180.0f, 0.0f);
+
+        SetActorLocation(pos_room1);
+        SetActorRotation(rot_room1);
     }
 }
