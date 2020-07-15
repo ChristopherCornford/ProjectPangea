@@ -156,9 +156,8 @@ void AProjectPangeaCharacter::EnterRoom()
         // position change
         FVector pos_room2 = FVector(-160.0f, 90.0f, 267.8f);
         FRotator rot_room2 = FRotator(0.0f, 0.0f, 0.0f);
-
-        SetActorLocation(pos_room2);
-        SetActorRotation(rot_room2);
+        //SetActorLocation(pos_room2);
+        //SetActorRotation(rot_room2);
     }
 }
 
@@ -181,8 +180,7 @@ void AProjectPangeaCharacter::ExitRoom()
         // position change
         FVector pos_room1 = FVector(-700.0f, 90.0f, 267.8f);
         FRotator rot_room1 = FRotator(0.0f, 180.0f, 0.0f);
-
-        SetActorLocation(pos_room1);
-        SetActorRotation(rot_room1);
+        //SetActorLocation(pos_room1);
+        //SetActorRotation(rot_room1);
     }
 }
