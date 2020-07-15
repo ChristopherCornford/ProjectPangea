@@ -32,8 +32,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
-    //UPROPERTY(EditAnywhere, BlueprintReadOnly, noclear, Category = "Class Types")
-    //TSubclassOf<class UObject> LevelStreamingActorClass;
     UPROPERTY(EditAnywhere)
     ALevelStreamerActor * LevelStreamingActor;
 

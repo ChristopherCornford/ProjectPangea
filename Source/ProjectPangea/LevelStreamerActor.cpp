@@ -46,7 +46,7 @@ void ALevelStreamerActor::OverlapBegins(UPrimitiveComponent* OverlappedComponent
     {
         isInZone = true;
 
-        FString debugStr = FString(TEXT("Enter room!"));
+        debugStr = FString(TEXT("Enter room!"));
         UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
         GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, debugStr);
     }
