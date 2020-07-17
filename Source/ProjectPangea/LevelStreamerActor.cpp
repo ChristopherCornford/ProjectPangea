@@ -24,11 +24,9 @@ void ALevelStreamerActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-
-    //////////////////////////// test ////////////
+    // initially load first level
     FLatentActionInfo LatentInfo;
     UGameplayStatics::LoadStreamLevel(this, FName(TEXT("Room0")), true, true, LatentInfo);
-    UGameplayStatics::LoadStreamLevel(this, FName(TEXT("Room1")), true, true, LatentInfo);
 }
 
 // Called every frame

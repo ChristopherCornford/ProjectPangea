@@ -175,38 +175,15 @@ void AProjectPangeaCharacter::EnterRoom()
             //SetActorLocation(pos_room2);
             //SetActorRotation(rot_room2);
         }
-        // unloading
-        /////////// test
-        debugStr = FString(TEXT("Staring unload!"));
-        //FString debugStr = FString(TEXT("Staring unload!"));
-        UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
-        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, debugStr);
 
+        // unloading
         if (streamingVolumeData->levelToUnload != "")
         {
-            /*
-            */
-            /////////// test
-            debugStr = FString(TEXT("We IN BOIS!"));
-            debugStr += FString(TEXT("\n\t")) + FString(TEXT("streamingVolumeData->levelToUnload: ")) + streamingVolumeData->levelToUnload.ToString();
-            UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
-            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, debugStr);
-
-            /*
-            FLatentActionInfo LatentInfo;
-            UGameplayStatics::UnloadStreamLevel(this, streamingVolumeData->levelToUnload, LatentInfo, true);
-            */
             // queue the unload. cannot unload immediately after load/another unload
             streamingVolumeData->hasQueuedUpload = true;
             streamingVolumeData->int_queueCountdown = 2;
             streamingVolumeData->levelToUnload_queued = streamingVolumeData->levelToUnload;
             streamingVolumeData->testQueing = true;
-
-            /////////// test
-            debugStr = FString(TEXT("We IN! But why no work?"));
-            debugStr += FString(TEXT("\n\t")) + FString(TEXT("streamingVolumeData->levelToUnload: ")) + streamingVolumeData->levelToUnload.ToString();
-            UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
-            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, debugStr);
         }
     }
 }
