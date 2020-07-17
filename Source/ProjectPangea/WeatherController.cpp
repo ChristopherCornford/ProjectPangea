@@ -15,6 +15,7 @@ AWeatherController::AWeatherController()
 void AWeatherController::BeginPlay()
 {
 	Super::BeginPlay();
+
 	
 }
 
