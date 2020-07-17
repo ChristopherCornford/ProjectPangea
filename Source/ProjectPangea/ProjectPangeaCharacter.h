@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 
 #include "LevelStreamerActor.h"
+#include "StreamingVolumesData.h"
 
 #include "ProjectPangeaCharacter.generated.h"
 
@@ -34,6 +35,8 @@ public:
 
     UPROPERTY(EditAnywhere)
     ALevelStreamerActor * LevelStreamingActor;
+    UPROPERTY(EditAnywhere)
+    AStreamingVolumesData * streamingVolumeData;
 
 protected:
 

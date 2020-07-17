@@ -140,24 +140,47 @@ void AProjectPangeaCharacter::MoveRight(float Value)
 
 void AProjectPangeaCharacter::EnterRoom()
 {
-    // TODO: test for LevelStreamingActor being set
-
-    FString debugStr = FString(TEXT("Opening room!"));
-    debugStr += FString(TEXT("\n\t")) + FString(TEXT("LevelStreamingActor->isInZone: ")) + (LevelStreamingActor->isInZone ? TEXT("true") : TEXT("false"));
+    // logging
+    FString debugStr = FString(TEXT("Loading next room!"));
+    if (LevelStreamingActor == NULL)
+    {
+        debugStr += FString(TEXT("\n\t")) + FString(TEXT("Note: NO STREAMING VOLUME SET!"));
+    }
+    if (streamingVolumeData == NULL)
+    {
+        debugStr += FString(TEXT("\n\t")) + FString(TEXT("Note: VOLUME DATA CLASS NOT SET!"));
+    }
     UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
-    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, debugStr);
+    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, debugStr);
 
-    if (LevelStreamingActor->isInZone && LevelStreamingActor->LevelToLoad != "")
+    // loading using volume data
+    /*
+    if (LevelStreamingActor != NULL && LevelStreamingActor->isInZone && LevelStreamingActor->LevelToLoad != "")
+    {
+    }
+    */
+
+    // loading using streaming data class
+    if (streamingVolumeData != NULL)
     {
         // loading
-        FLatentActionInfo LatentInfo;
-        UGameplayStatics::LoadStreamLevel(this, LevelStreamingActor->LevelToLoad, true, true, LatentInfo);
+        if (streamingVolumeData->levelToLoad != "")
+        {
+            FLatentActionInfo LatentInfo;
+            UGameplayStatics::LoadStreamLevel(this, streamingVolumeData->levelToLoad, true, true, LatentInfo);
 
-        // position change
-        FVector pos_room2 = FVector(-160.0f, 90.0f, 267.8f);
-        FRotator rot_room2 = FRotator(0.0f, 0.0f, 0.0f);
-        //SetActorLocation(pos_room2);
-        //SetActorRotation(rot_room2);
+            // position change
+            FVector pos_room2 = FVector(-160.0f, 90.0f, 267.8f);
+            FRotator rot_room2 = FRotator(0.0f, 0.0f, 0.0f);
+            //SetActorLocation(pos_room2);
+            //SetActorRotation(rot_room2);
+        }
+        // unloading
+        if (streamingVolumeData->levelToUnload != "")
+        {
+            FLatentActionInfo LatentInfo;
+            UGameplayStatics::UnloadStreamLevel(this, streamingVolumeData->levelToUnload, LatentInfo, true);
+        }
     }
 }
 
@@ -166,11 +189,16 @@ void AProjectPangeaCharacter::EnterRoom()
 void AProjectPangeaCharacter::ExitRoom()
 {
     FString debugStr = FString(TEXT("Closing room!"));
-    debugStr += FString(TEXT("\n\t")) + FString(TEXT("LevelStreamingActor->isInZone: ")) + (LevelStreamingActor->isInZone ? TEXT("true") : TEXT("false"));
+    if (LevelStreamingActor != NULL) {
+        debugStr += FString(TEXT("\n\t")) + FString(TEXT("LevelStreamingActor->isInZone: ")) + (LevelStreamingActor->isInZone ? TEXT("true") : TEXT("false"));
+    }
+    else {
+        debugStr += FString(TEXT("\n\t")) + FString(TEXT("Note: NO STREAMING VOLUME SET!"));
+    }
     UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
     GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, debugStr);
 
-    if (!LevelStreamingActor->isInZone && LevelStreamingActor->LevelToLoad != "")
+    if (LevelStreamingActor != NULL && !LevelStreamingActor->isInZone && LevelStreamingActor->LevelToLoad != "")
     {
         // unloading
         FLatentActionInfo LatentInfo;

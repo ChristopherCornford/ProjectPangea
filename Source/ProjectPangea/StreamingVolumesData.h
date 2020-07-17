@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+
+#include <vector>
+
 #include "StreamingVolumesData.generated.h"
 
 UCLASS()
@@ -23,4 +26,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+
+    ////////////////////////////////////////////////////////////////////
+    UPROPERTY(EditAnywhere)
+    AActor * currentVolume;
+    UPROPERTY(EditAnywhere)
+    FName levelToLoad;
+    UPROPERTY(EditAnywhere)
+    FName levelToUnload;
 };

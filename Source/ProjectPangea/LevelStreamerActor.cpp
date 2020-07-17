@@ -37,18 +37,27 @@ void ALevelStreamerActor::Tick(float DeltaTime)
 
 void ALevelStreamerActor::OverlapBegins(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-    FString debugStr = FString(TEXT("Exit check!"));
-    UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
-    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, debugStr);
-
     ACharacter* MyCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
-    if (OtherActor == (AActor*)MyCharacter && LevelToLoad != "")
+    //if (OtherActor == (AActor*)MyCharacter && LevelToLoad != "")
+    if (OtherActor == (AActor*)MyCharacter)
     {
-        isInZone = true;
-
-        debugStr = FString(TEXT("Enter room!"));
+        FString debugStr = FString(TEXT("Character volume overlap!"));
         UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
-        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, debugStr);
+        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, debugStr);
+
+        isInZone = true;
+        if (streamingVolumeData != NULL)
+        {
+            streamingVolumeData->currentVolume = this;
+            streamingVolumeData->levelToLoad = LevelToLoad;
+            streamingVolumeData->levelToUnload = LevelToUnload;
+        }
+        else
+        {
+            debugStr = FString(TEXT("Error: Streaming volumes data class not linked to streaming volume!"));
+            UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
+            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, debugStr);
+        }
     }
 }
 
@@ -56,18 +65,31 @@ void ALevelStreamerActor::OverlapBegins(UPrimitiveComponent* OverlappedComponent
 
 void ALevelStreamerActor::OverlapEnds(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-    FString debugStr = FString(TEXT("Exit check!"));
-    UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
-    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, debugStr);
-
     ACharacter* MyCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
-    if (OtherActor == (AActor*)MyCharacter && LevelToLoad != "")
+    //if (OtherActor == (AActor*)MyCharacter && LevelToLoad != "")
+    if (OtherActor == (AActor*)MyCharacter)
     {
-        isInZone = false;
-
-        debugStr = FString(TEXT("Room exited!"));
+        FString debugStr = FString(TEXT("Character volume overlap ended!"));
         UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
         GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, debugStr);
+
+        isInZone = false;
+        if (streamingVolumeData != NULL)
+        {
+            // only delete saved current volume if it's this one
+            if (streamingVolumeData->currentVolume == this)
+            {
+                streamingVolumeData->currentVolume = NULL;
+                streamingVolumeData->levelToLoad = "";
+                streamingVolumeData->levelToUnload = "";
+            }
+        }
+        else
+        {
+            debugStr = FString(TEXT("Error: Streaming volumes data class not linked to streaming volume!"));
+            UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
+            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, debugStr);
+        }
     }
 }
 

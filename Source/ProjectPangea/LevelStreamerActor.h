@@ -7,6 +7,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Components/BoxComponent.h"
+#include "StreamingVolumesData.h"
 
 #include "LevelStreamerActor.generated.h"
 
@@ -24,12 +25,15 @@ private:
 public:	
 	// Sets default values for this actor's properties
 	ALevelStreamerActor();
-
-    //static bool isInZone;
-    bool isInZone;
-
+    
     UPROPERTY(EditAnywhere)
     FName LevelToLoad;
+    UPROPERTY(EditAnywhere)
+    FName LevelToUnload;
+
+    bool isInZone;
+    UPROPERTY(EditAnywhere)
+    AStreamingVolumesData * streamingVolumeData;
 
 protected:
 	// Called when the game starts or when spawned
