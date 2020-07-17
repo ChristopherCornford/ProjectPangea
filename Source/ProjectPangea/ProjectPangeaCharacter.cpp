@@ -176,10 +176,37 @@ void AProjectPangeaCharacter::EnterRoom()
             //SetActorRotation(rot_room2);
         }
         // unloading
+        /////////// test
+        debugStr = FString(TEXT("Staring unload!"));
+        //FString debugStr = FString(TEXT("Staring unload!"));
+        UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
+        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, debugStr);
+
         if (streamingVolumeData->levelToUnload != "")
         {
+            /*
+            */
+            /////////// test
+            debugStr = FString(TEXT("We IN BOIS!"));
+            debugStr += FString(TEXT("\n\t")) + FString(TEXT("streamingVolumeData->levelToUnload: ")) + streamingVolumeData->levelToUnload.ToString();
+            UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
+            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, debugStr);
+
+            /*
             FLatentActionInfo LatentInfo;
             UGameplayStatics::UnloadStreamLevel(this, streamingVolumeData->levelToUnload, LatentInfo, true);
+            */
+            // queue the unload. cannot unload immediately after load/another unload
+            streamingVolumeData->hasQueuedUpload = true;
+            streamingVolumeData->int_queueCountdown = 2;
+            streamingVolumeData->levelToUnload_queued = streamingVolumeData->levelToUnload;
+            streamingVolumeData->testQueing = true;
+
+            /////////// test
+            debugStr = FString(TEXT("We IN! But why no work?"));
+            debugStr += FString(TEXT("\n\t")) + FString(TEXT("streamingVolumeData->levelToUnload: ")) + streamingVolumeData->levelToUnload.ToString();
+            UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
+            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, debugStr);
         }
     }
 }
@@ -188,6 +215,8 @@ void AProjectPangeaCharacter::EnterRoom()
 
 void AProjectPangeaCharacter::ExitRoom()
 {
+
+    /*
     FString debugStr = FString(TEXT("Closing room!"));
     if (LevelStreamingActor != NULL) {
         debugStr += FString(TEXT("\n\t")) + FString(TEXT("LevelStreamingActor->isInZone: ")) + (LevelStreamingActor->isInZone ? TEXT("true") : TEXT("false"));
@@ -205,10 +234,17 @@ void AProjectPangeaCharacter::ExitRoom()
         //UGameplayStatics::UnloadStreamLevel(this, LevelStreamingActor->LevelToLoad, LatentInfo);
         UGameplayStatics::UnloadStreamLevel(this, LevelStreamingActor->LevelToLoad, LatentInfo, true);
 
+        /////////// test
+        debugStr = FString(TEXT("So here it works...."));
+        debugStr += FString(TEXT("\n\t")) + FString(TEXT("LevelStreamingActor->LevelToLoad: ")) + LevelStreamingActor->LevelToLoad.ToString();
+        UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
+        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, debugStr);
+
         // position change
         FVector pos_room1 = FVector(-700.0f, 90.0f, 267.8f);
         FRotator rot_room1 = FRotator(0.0f, 180.0f, 0.0f);
         //SetActorLocation(pos_room1);
         //SetActorRotation(rot_room1);
     }
+    */
 }

@@ -15,6 +15,7 @@ void AStreamingVolumesData::BeginPlay()
 {
 	Super::BeginPlay();
 	
+    int_queueCountdown = 0;
 }
 
 // Called every frame

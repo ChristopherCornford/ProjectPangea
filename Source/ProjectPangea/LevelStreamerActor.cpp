@@ -23,7 +23,12 @@ ALevelStreamerActor::ALevelStreamerActor()
 void ALevelStreamerActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+
+    //////////////////////////// test ////////////
+    FLatentActionInfo LatentInfo;
+    UGameplayStatics::LoadStreamLevel(this, FName(TEXT("Room0")), true, true, LatentInfo);
+    UGameplayStatics::LoadStreamLevel(this, FName(TEXT("Room1")), true, true, LatentInfo);
 }
 
 // Called every frame
@@ -31,6 +36,22 @@ void ALevelStreamerActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+    if (streamingVolumeData->hasQueuedUpload)
+    {
+        if (streamingVolumeData->int_queueCountdown > 0)
+        {
+            streamingVolumeData->int_queueCountdown--;
+        }
+        else
+        {
+            unload(streamingVolumeData->levelToUnload_queued);
+            // clear queue
+            streamingVolumeData->hasQueuedUpload = false;
+            streamingVolumeData->levelToUnload_queued = "";
+            //streamingVolumeData->testQueing = false;
+            streamingVolumeData->int_queueCountdown = 0;
+        }
+    }
 }
 
 
@@ -91,5 +112,13 @@ void ALevelStreamerActor::OverlapEnds(UPrimitiveComponent* OverlappedComponent, 
             GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, debugStr);
         }
     }
+}
+
+
+
+void ALevelStreamerActor::unload(FName levelToUnload)
+{
+    FLatentActionInfo LatentInfo;
+    UGameplayStatics::UnloadStreamLevel(this, levelToUnload, LatentInfo, true);
 }
 

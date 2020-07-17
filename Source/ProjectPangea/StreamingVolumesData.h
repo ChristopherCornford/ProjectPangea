@@ -34,4 +34,13 @@ public:
     FName levelToLoad;
     UPROPERTY(EditAnywhere)
     FName levelToUnload;
+    
+    UPROPERTY(EditAnywhere)
+    bool hasQueuedUpload;
+    UPROPERTY(EditAnywhere)
+    bool testQueing;
+    UPROPERTY(EditAnywhere)
+    FName levelToUnload_queued;
+    UPROPERTY(EditAnywhere)
+    int int_queueCountdown;
 };

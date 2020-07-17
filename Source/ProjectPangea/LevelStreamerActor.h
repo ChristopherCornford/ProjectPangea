@@ -44,6 +44,8 @@ protected:
     UFUNCTION()
     void OverlapEnds(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+    void unload(FName levelToUnload);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
