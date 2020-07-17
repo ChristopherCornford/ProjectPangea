@@ -43,4 +43,7 @@ public:
     FName levelToUnload_queued;
     UPROPERTY(EditAnywhere)
     int int_queueCountdown;
+
+    void queueUnload(FName levelToUnload);
+    void clearQueue();
 };

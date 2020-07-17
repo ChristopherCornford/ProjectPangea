@@ -25,3 +25,23 @@ void AStreamingVolumesData::Tick(float DeltaTime)
 
 }
 
+
+
+void AStreamingVolumesData::queueUnload(FName inLevelToUnload)
+{
+    hasQueuedUpload = true;
+    testQueing = true;
+    int_queueCountdown = 2;
+    levelToUnload_queued = inLevelToUnload;
+}
+
+
+
+void AStreamingVolumesData::clearQueue()
+{
+    hasQueuedUpload = false;
+    //testQueing = false;
+    int_queueCountdown = 0;
+    levelToUnload_queued = "";
+}
+

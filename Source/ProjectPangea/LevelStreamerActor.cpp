@@ -34,6 +34,7 @@ void ALevelStreamerActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+    // check if an unload is queued
     if (streamingVolumeData->hasQueuedUpload)
     {
         if (streamingVolumeData->int_queueCountdown > 0)
@@ -43,11 +44,7 @@ void ALevelStreamerActor::Tick(float DeltaTime)
         else
         {
             unload(streamingVolumeData->levelToUnload_queued);
-            // clear queue
-            streamingVolumeData->hasQueuedUpload = false;
-            streamingVolumeData->levelToUnload_queued = "";
-            //streamingVolumeData->testQueing = false;
-            streamingVolumeData->int_queueCountdown = 0;
+            streamingVolumeData->clearQueue();
         }
     }
 }

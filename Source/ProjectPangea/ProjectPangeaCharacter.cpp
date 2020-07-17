@@ -180,10 +180,7 @@ void AProjectPangeaCharacter::EnterRoom()
         if (streamingVolumeData->levelToUnload != "")
         {
             // queue the unload. cannot unload immediately after load/another unload
-            streamingVolumeData->hasQueuedUpload = true;
-            streamingVolumeData->int_queueCountdown = 2;
-            streamingVolumeData->levelToUnload_queued = streamingVolumeData->levelToUnload;
-            streamingVolumeData->testQueing = true;
+            streamingVolumeData->queueUnload(streamingVolumeData->levelToUnload);
         }
     }
 }
