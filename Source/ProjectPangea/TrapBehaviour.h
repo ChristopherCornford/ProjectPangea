@@ -6,6 +6,7 @@
 #include "Engine/World.h"
 #include "Components/ActorComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "AnimalMotion.h"
 #include "TrapClass.h"
 #include "TrapBehaviour.generated.h"
@@ -33,7 +34,6 @@ private:
 	FVector TrappedPos;
 
 	bool IsReadied = false;
-	bool IsLaunched = false;
 	FVector StartingPoint;
 	FRotator InitRotation;
 
@@ -42,6 +42,7 @@ private:
 	float v = 40.0f;
 	float PlayerToProjectileDistance;
 
+	float RopeNetThrownExhaustionIncr = 5.0f;
 	float RopeNetTrapExhaustionIncr = 5.0f;
 	float WoodenCageExhaustionIncr = 5.0f;
 
@@ -52,7 +53,6 @@ public:
 	void SetTrapType(TrapType InType);
 
 	void SetIsReadied(bool InputBool);
-	void SetIsLaunched(bool InputBool);
 	void SetStartingPoint(FVector InputStartingPoint);
 	void SetInitRotation(FRotator InputInitRotation);
 

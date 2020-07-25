@@ -26,31 +26,26 @@ void UTrapBehaviour::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	
 	if (IsReadied)
 	{
 		if (Type == RopeNetThrow)
 		{
 			FVector PreppedTrapLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
-			PreppedTrapLocation += (30.0f * GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorForwardVector());
-			PreppedTrapLocation += (15.0f * GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorRightVector());
+			PreppedTrapLocation += (70.0f * GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorForwardVector());
+			//PreppedTrapLocation.Z += 25.0f;
 			GetOwner()->SetActorLocation(PreppedTrapLocation);
 			GetOwner()->SetActorRotation(GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorRotation());
-			//GetOwner()->SetActorRotation(InitRotation);
+			GetOwner()->SetActorRotation(InitRotation);
 		}
 	}
-	if (IsLaunched)
+
+	if (Type == RopeNetThrow)
 	{
-		GetOwner()->SetActorRotation(InitRotation);
-		//FVector NextProjectilePosition = GetOwner()->GetActorLocation() + (GetOwner()->GetActorForwardVector());
-		//GetOwner()->SetActorLocation(NextProjectilePosition);
-		//FVector PlayerToProjectileVector = StartingPoint - GetOwner()->GetActorLocation();
-		//PlayerToProjectileVector = FVector(PlayerToProjectileVector.X, PlayerToProjectileVector.Y, 0.0f);
-		//PlayerToProjectileDistance = PlayerToProjectileVector.Size();
-		//float D = PlayerToProjectileDistance;
-		//float newZ = (D * tan(theta)) - ((g * pow(D, D)) / (2 * pow(v, v) * pow(cos(theta), cos(theta))));
-		//FVector AdjustedProjectileHeightVector = NextProjectilePosition;
-		//AdjustedProjectileHeightVector.Z = newZ;
-		//GetOwner()->SetActorLocation(AdjustedProjectileHeightVector);
+		if (GetOwner()->GetActorLocation().Z < 37.0f)
+		{
+			GetOwner()->Destroy();
+		}
 	}
 
 	if (IsTrapped)
@@ -60,10 +55,19 @@ void UTrapBehaviour::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 			IsTrapped = false;
 			GetOwner()->Destroy();
 		}
-	//	if (Type == RopeNetThrow)
-	//	{
-			//TrappedActor->SetActorLocation(NewTrappedPos);//TrappedPos);
-	//	}
+		if (Type == RopeNetThrow)
+		{
+			if (TrappedActor->FindComponentByClass<UAnimalMotion>()->GetExhaustion() <
+				TrappedActor->FindComponentByClass<UAnimalMotion>()->GetMaxExhaustion())
+			{
+				TrappedActor->FindComponentByClass<UAnimalMotion>()->IncrementExhaustion(RopeNetThrownExhaustionIncr);
+			}
+			else
+			{
+				TrappedActor->FindComponentByClass<UAnimalMotion>()->SetIsAlerted(true);
+				TrappedActor->FindComponentByClass<UAnimalMotion>()->SetIsExhausted(true);
+			}
+		}
 		if (Type == RopeNetTrap)
 		{
 			FVector RopeNetFinalPos = GetOwner()->GetActorLocation();
@@ -105,10 +109,6 @@ void UTrapBehaviour::SetIsReadied(bool InputBool)
 {
 	IsReadied = InputBool;
 }
-void UTrapBehaviour::SetIsLaunched(bool InputBool)
-{
-	IsLaunched = InputBool;
-}
 void UTrapBehaviour::SetStartingPoint(FVector InputStartingPoint)
 {
 	StartingPoint = InputStartingPoint;
@@ -126,36 +126,47 @@ void UTrapBehaviour::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent,
 	{
 		if (!OtherActor->FindComponentByClass<UAnimalMotion>()->GetIsTamed())
 		{
-			if (Type == RopeNetThrow)
+			if (!OtherActor->FindComponentByClass<UAnimalMotion>()->GetIsTrapped())
 			{
-				//UE_LOG(LogTemp, Log, TEXT("ANIMAL TRAPPED! - Rope Net Thrown"));
-				//IsTrapped = true;
-				//TrappedActor = OtherActor;
-				//TrappedPos = OtherActor->GetActorLocation();
-			}
-			else if (Type == RopeNetTrap)
-			{
-				UE_LOG(LogTemp, Log, TEXT("ANIMAL TRAPPED! - Rope Net Trap"));
-				IsTrapped = true;
-				OtherActor->FindComponentByClass<UAnimalMotion>()->SetIsTrapped(true);
-				TrappedActor = OtherActor;
+				if (Type == RopeNetThrow)
+				{
+					UE_LOG(LogTemp, Log, TEXT("ANIMAL TRAPPED! - Rope Net Thrown"));
+					IsTrapped = true;
+					OtherActor->FindComponentByClass<UAnimalMotion>()->SetIsTrapped(true);
+					TrappedActor = OtherActor;
 
-				FVector RopeNetFinalPos = GetOwner()->GetActorLocation();
-				RopeNetFinalPos.Z = 200.0f;
-				GetOwner()->SetActorLocation(RopeNetFinalPos);
-				RopeNetFinalPos.Z += 75.0f;
-				OtherActor->SetActorLocation(RopeNetFinalPos);
-			}
-			else if (Type == WoodenCage)
-			{
-				UE_LOG(LogTemp, Log, TEXT("ANIMAL TRAPPED! - Wooden Cage"));
-				IsTrapped = true;
-				OtherActor->FindComponentByClass<UAnimalMotion>()->SetIsTrapped(true);
-				TrappedActor = OtherActor;
+					GetOwner()->FindComponentByClass<UMeshComponent>()->SetSimulatePhysics(false);
 
-				FVector RopeNetFinalPos = GetOwner()->GetActorLocation();
-				RopeNetFinalPos.Z += 75.0f;
-				OtherActor->SetActorLocation(RopeNetFinalPos);
+					FVector RopeNetThrownFinalPos = GetOwner()->GetActorLocation();
+					RopeNetThrownFinalPos.Z = 40.0f;
+					GetOwner()->SetActorLocation(RopeNetThrownFinalPos);
+					RopeNetThrownFinalPos.Z += 70.0f;
+					OtherActor->SetActorLocation(RopeNetThrownFinalPos);
+				}
+				else if (Type == RopeNetTrap)
+				{
+					UE_LOG(LogTemp, Log, TEXT("ANIMAL TRAPPED! - Rope Net Trap"));
+					IsTrapped = true;
+					OtherActor->FindComponentByClass<UAnimalMotion>()->SetIsTrapped(true);
+					TrappedActor = OtherActor;
+
+					FVector RopeNetFinalPos = GetOwner()->GetActorLocation();
+					RopeNetFinalPos.Z = 200.0f;
+					GetOwner()->SetActorLocation(RopeNetFinalPos);
+					RopeNetFinalPos.Z += 75.0f;
+					OtherActor->SetActorLocation(RopeNetFinalPos);
+				}
+				else if (Type == WoodenCage)
+				{
+					UE_LOG(LogTemp, Log, TEXT("ANIMAL TRAPPED! - Wooden Cage"));
+					IsTrapped = true;
+					OtherActor->FindComponentByClass<UAnimalMotion>()->SetIsTrapped(true);
+					TrappedActor = OtherActor;
+
+					FVector TrappedActorFinalPos = GetOwner()->GetActorLocation();
+					TrappedActorFinalPos.Z += 75.0f;
+					OtherActor->SetActorLocation(TrappedActorFinalPos);
+				}
 			}
 		}
 	}

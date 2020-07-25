@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Components/ActorComponent.h"
 #include "Components/PrimitiveComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "CableComponent.h"
 #include "TrapClass.h"
 #include "TrapBehaviour.h"

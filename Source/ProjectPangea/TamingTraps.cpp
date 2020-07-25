@@ -47,7 +47,7 @@ void UTamingTraps::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 	if (GetWorld()->GetFirstPlayerController()->WasInputKeyJustReleased("Two"))
 	{
 		LaunchThrownTrap(CurrentlyPreparedThrownTrap);
-		CurrentlyPreparedThrownTrap = NULL;
+		//CurrentlyPreparedThrownTrap = NULL;
 	}
 	if (GetWorld()->GetFirstPlayerController()->WasInputKeyJustPressed("Three"))
 	{
@@ -88,11 +88,11 @@ void UTamingTraps::UseWoodenCage()
 {
 	UE_LOG(LogTemp, Log, TEXT("Using Wooden Cage"));
 	TypeOfTrapToSpawn = WoodenCage;
-	SpawnTrap(TypeOfTrapToSpawn, BasicTrapActorToSpawn);
+	SpawnTrapNew(TypeOfTrapToSpawn, BasicTrapActorToSpawn);
 }
 
-void UTamingTraps::SpawnTrap(TrapType TrapTypeToSpawn, TSubclassOf<AActor> TrapToSpawn)
-{
+//void UTamingTraps::SpawnTrap(TrapType TrapTypeToSpawn, TSubclassOf<AActor> TrapToSpawn)
+/*{
 	FVector SpawnLocation = GetOwner()->GetActorLocation() + (150.0f * GetOwner()->GetActorForwardVector());
 	SpawnLocation.Z = 1000.0f;
 	FRotator SpawnRotation = GetOwner()->GetActorRotation();
@@ -117,7 +117,7 @@ void UTamingTraps::SpawnTrap(TrapType TrapTypeToSpawn, TSubclassOf<AActor> TrapT
 	}
 	//SpawnedTrap->FindComponentByClass<UTrapBehaviour>()->SetTrapType(TrapTypeToSpawn);
 	//SpawnedTrapList.Add(TrapClass(TrapTypeToSpawn, SpawnedTrap, SpawnedTrapList.Num()));
-}
+}*/
 void UTamingTraps::SpawnTrapNew(TrapType TrapTypeToSpawn, TSubclassOf<AActor> TrapToSpawn)
 {
 	FVector SpawnLocation = GetOwner()->GetActorLocation() + (150.0f * GetOwner()->GetActorForwardVector());
@@ -125,12 +125,13 @@ void UTamingTraps::SpawnTrapNew(TrapType TrapTypeToSpawn, TSubclassOf<AActor> Tr
 	FRotator SpawnRotation = GetOwner()->GetActorRotation();
 	AActor* SpawnedTrap = GetWorld()->SpawnActor(TrapToSpawn, &SpawnLocation, &SpawnRotation);
 	SpawnedTrap->FindComponentByClass<UTrapBehaviour>()->SetTrapType(TrapTypeToSpawn);
+	SpawnedTrap->FindComponentByClass<UBoxComponent>()->SetGenerateOverlapEvents(true);
 }
 void UTamingTraps::SpawnThrownTrap(TrapType TrapTypeToSpawn, TSubclassOf<AActor> TrapToSpawn)
 {
-	FVector SpawnLocation = GetOwner()->GetActorLocation() + (30.0f * GetOwner()->GetActorForwardVector());
-	SpawnLocation += (15.0f * GetOwner()->GetActorRightVector());
-	SpawnLocation.Z = 100.0f;
+	FVector SpawnLocation = GetOwner()->GetActorLocation() + (70.0f * GetOwner()->GetActorForwardVector());
+	//SpawnLocation += (15.0f * GetOwner()->GetActorRightVector());
+	//SpawnLocation.Z += 25.0f;
 	FRotator SpawnRotation = GetOwner()->GetActorRotation();
 	AActor* SpawnedTrap = GetWorld()->SpawnActor(TrapToSpawn, &SpawnLocation, &SpawnRotation);
 	SpawnedTrap->FindComponentByClass<UTrapBehaviour>()->SetTrapType(TrapTypeToSpawn);
@@ -139,18 +140,17 @@ void UTamingTraps::SpawnThrownTrap(TrapType TrapTypeToSpawn, TSubclassOf<AActor>
 }
 void UTamingTraps::LaunchThrownTrap(AActor* SpawnedTrap)
 {
-	UE_LOG(LogTemp, Log, TEXT("LAUNCHED HOLLA!"));
+	//UE_LOG(LogTemp, Log, TEXT("LAUNCHED HOLLA!"));
 	SpawnedTrap->FindComponentByClass<UTrapBehaviour>()->SetIsReadied(false);
-	//Actually Launch Trap
-	SpawnedTrap->FindComponentByClass<UTrapBehaviour>()->SetIsLaunched(true);
-	SpawnedTrap->FindComponentByClass<UTrapBehaviour>()->SetStartingPoint(SpawnedTrap->GetActorLocation());
-	SpawnedTrap->FindComponentByClass<UTrapBehaviour>()->SetInitRotation(SpawnedTrap->GetActorRotation());
-	FVector TempLaunchVector = FVector(GetOwner()->GetActorForwardVector());
-	TempLaunchVector.Z += 50.0f;
-	TempLaunchVector * 100000000000000.0f;
-	SpawnedTrap->FindComponentByClass<UPrimitiveComponent>()->AddForce(TempLaunchVector);
-	SpawnedTrap->FindComponentByClass<UBoxComponent>()->SetRelativeScale3D(FVector(3.0f, 3.0f, 3.0f));
+	//SpawnedTrap->FindComponentByClass<UTrapBehaviour>()->SetStartingPoint(SpawnedTrap->GetActorLocation());
+	//SpawnedTrap->FindComponentByClass<UTrapBehaviour>()->SetInitRotation(SpawnedTrap->GetActorRotation());
+	SpawnedTrap->FindComponentByClass<UMeshComponent>()->SetSimulatePhysics(true);
+	SpawnedTrap->FindComponentByClass<UBoxComponent>()->SetGenerateOverlapEvents(true);
+	float ForceStrength = 15000.0f;
+	FVector ForceVector = GetOwner()->GetActorForwardVector();
+	ForceVector.Z = 1.0f;
+	ForceVector = ForceVector * ForceStrength * SpawnedTrap->FindComponentByClass<UStaticMeshComponent>()->GetMass();
+	SpawnedTrap->FindComponentByClass<UStaticMeshComponent>()->AddForce(ForceVector);
 
-	//Overlap set up in TrapBehaviour,
-	//Destroy if hit floor can be added to TrapBehaviour if z of trap (GetOwner can be used in that class), is less than a set value, GetOwner()->Destro()y.
+	////Destroy if hit floor can be added to TrapBehaviour if z of trap (GetOwner can be used in that class), is less than a set value, GetOwner()->Destro()y.
 }
