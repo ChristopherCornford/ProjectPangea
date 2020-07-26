@@ -29,14 +29,18 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	//TArray<TrapClass> SpawnedTrapList;
-
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<AActor> BasicTrapActorToSpawn;
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<AActor> BasicThrownTrapActorToSpawn;
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<AActor> CableTrapActorToSpawn;
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<AActor> CableFloorAttachmentToSpawn;
+
+	bool IsAnotherTrapInProgress = false;
+	bool IsRopeLassoInProgress = false;
+	bool IsRopeLassoFloorAttachmentInProgress = false;
 
 	TrapType TypeOfTrapToSpawn;
 
@@ -47,12 +51,13 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;	
 
 	void UseRopeLasso();
+	void AttachRopeLassoToGround();
 	void UseRopeNetThrow();
 	void UseRopeNetTrap();
+	void UseRopeLegTrap();
 	void UseWoodenCage();
 
 	void SpawnTrap(TrapType TrapTypeToSpawn, TSubclassOf<AActor> TrapToSpawn);
-	void SpawnTrapNew(TrapType TrapTypeToSpawn, TSubclassOf<AActor> TrapToSpawn);
 	void SpawnThrownTrap(TrapType TrapTypeToSpawn, TSubclassOf<AActor> TrapToSpawn);
 	void LaunchThrownTrap(AActor* SpawnedTrap);
 };

@@ -26,21 +26,20 @@ void UTrapBehaviour::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	
+
 	if (IsReadied)
 	{
 		if (Type == RopeNetThrow)
 		{
 			FVector PreppedTrapLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
 			PreppedTrapLocation += (70.0f * GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorForwardVector());
-			//PreppedTrapLocation.Z += 25.0f;
 			GetOwner()->SetActorLocation(PreppedTrapLocation);
 			GetOwner()->SetActorRotation(GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorRotation());
 			GetOwner()->SetActorRotation(InitRotation);
 		}
 	}
 
-	if (Type == RopeNetThrow)
+	if (Type == RopeNetThrow || Type == RopeLasso)
 	{
 		if (GetOwner()->GetActorLocation().Z < 37.0f)
 		{
@@ -55,48 +54,43 @@ void UTrapBehaviour::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 			IsTrapped = false;
 			GetOwner()->Destroy();
 		}
-		if (Type == RopeNetThrow)
+		if (Type == RopeLasso)
 		{
-			if (TrappedActor->FindComponentByClass<UAnimalMotion>()->GetExhaustion() <
-				TrappedActor->FindComponentByClass<UAnimalMotion>()->GetMaxExhaustion())
-			{
-				TrappedActor->FindComponentByClass<UAnimalMotion>()->IncrementExhaustion(RopeNetThrownExhaustionIncr);
-			}
-			else
-			{
-				TrappedActor->FindComponentByClass<UAnimalMotion>()->SetIsAlerted(true);
-				TrappedActor->FindComponentByClass<UAnimalMotion>()->SetIsExhausted(true);
-			}
+			TrappedExhaustion(RopeLassoExhaustionIncr);
 		}
-		if (Type == RopeNetTrap)
+		else if (Type == RopeNetTrap)
 		{
 			FVector RopeNetFinalPos = GetOwner()->GetActorLocation();
 			RopeNetFinalPos.Z += 75.0f;
 			TrappedActor->SetActorLocation(RopeNetFinalPos);
-			if (TrappedActor->FindComponentByClass<UAnimalMotion>()->GetExhaustion() <
-				TrappedActor->FindComponentByClass<UAnimalMotion>()->GetMaxExhaustion())
-			{
-				TrappedActor->FindComponentByClass<UAnimalMotion>()->IncrementExhaustion(RopeNetTrapExhaustionIncr);
-			}
-			else
-			{
-				TrappedActor->FindComponentByClass<UAnimalMotion>()->SetIsAlerted(true);
-				TrappedActor->FindComponentByClass<UAnimalMotion>()->SetIsExhausted(true);
-			}
+			TrappedExhaustion(RopeNetTrapExhaustionIncr);
+		}
+		else if (Type == RopeNetThrow)
+		{
+			TrappedExhaustion(RopeNetThrowExhaustionIncr);
+		}
+		else if (Type == RopeLegTrap)
+		{
+			TrappedExhaustion(RopeLegTrapExhaustionIncr);
 		}
 		else if (Type == WoodenCage)
 		{
-			if (TrappedActor->FindComponentByClass<UAnimalMotion>()->GetExhaustion() <
-				TrappedActor->FindComponentByClass<UAnimalMotion>()->GetMaxExhaustion())
-			{
-				TrappedActor->FindComponentByClass<UAnimalMotion>()->IncrementExhaustion(WoodenCageExhaustionIncr);
-			}
-			else
-			{
-				TrappedActor->FindComponentByClass<UAnimalMotion>()->SetIsAlerted(true);
-				TrappedActor->FindComponentByClass<UAnimalMotion>()->SetIsExhausted(true);
-			}
+			TrappedExhaustion(WoodenCageExhaustionIncr);
 		}
+	}
+}
+
+void UTrapBehaviour::TrappedExhaustion(float ExhaustionIncrValue)
+{
+	if (TrappedActor->FindComponentByClass<UAnimalMotion>()->GetExhaustion() <
+		TrappedActor->FindComponentByClass<UAnimalMotion>()->GetMaxExhaustion())
+	{
+		TrappedActor->FindComponentByClass<UAnimalMotion>()->IncrementExhaustion(ExhaustionIncrValue);
+	}
+	else
+	{
+		TrappedActor->FindComponentByClass<UAnimalMotion>()->SetIsAlerted(true);
+		TrappedActor->FindComponentByClass<UAnimalMotion>()->SetIsExhausted(true);
 	}
 }
 
@@ -128,7 +122,27 @@ void UTrapBehaviour::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent,
 		{
 			if (!OtherActor->FindComponentByClass<UAnimalMotion>()->GetIsTrapped())
 			{
-				if (Type == RopeNetThrow)
+				if (Type == RopeLasso)
+				{
+					UE_LOG(LogTemp, Log, TEXT("ANIMAL TRAPPED! - Rope Lasso Thrown"));
+					IsTrapped = true;
+					OtherActor->FindComponentByClass<UAnimalMotion>()->SetIsTrapped(true);
+					TrappedActor = OtherActor;
+
+					GetOwner()->FindComponentByClass<UMeshComponent>()->SetSimulatePhysics(false);
+
+					FVector RopeLassoFinalPos = GetOwner()->GetActorLocation();
+					RopeLassoFinalPos.Z = 150.0f;
+					GetOwner()->SetActorLocation(RopeLassoFinalPos);
+					RopeLassoFinalPos.Z = 70.0f;
+					OtherActor->SetActorLocation(RopeLassoFinalPos);
+
+					UCableComponent* Cable = GetOwner()->FindComponentByClass<UCableComponent>();
+					USceneComponent* CharacterSkeletalMeshComponent = Cast<USceneComponent>(GetWorld()->GetFirstPlayerController()->
+						GetPawn()->FindComponentByClass<USkeletalMeshComponent>());
+					Cable->AttachToComponent(CharacterSkeletalMeshComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Hand_Socket"));
+				}
+				else if (Type == RopeNetThrow)
 				{
 					UE_LOG(LogTemp, Log, TEXT("ANIMAL TRAPPED! - Rope Net Thrown"));
 					IsTrapped = true;
@@ -156,9 +170,16 @@ void UTrapBehaviour::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent,
 					RopeNetFinalPos.Z += 75.0f;
 					OtherActor->SetActorLocation(RopeNetFinalPos);
 				}
-				else if (Type == WoodenCage)
+				else if (Type == RopeLegTrap || Type == WoodenCage)
 				{
-					UE_LOG(LogTemp, Log, TEXT("ANIMAL TRAPPED! - Wooden Cage"));
+					if (Type == RopeLegTrap)
+					{
+						UE_LOG(LogTemp, Log, TEXT("ANIMAL TRAPPED! - Rope Leg Trap"));
+					}
+					else if (Type == WoodenCage)
+					{
+						UE_LOG(LogTemp, Log, TEXT("ANIMAL TRAPPED! - Wooden Cage"));
+					}
 					IsTrapped = true;
 					OtherActor->FindComponentByClass<UAnimalMotion>()->SetIsTrapped(true);
 					TrappedActor = OtherActor;

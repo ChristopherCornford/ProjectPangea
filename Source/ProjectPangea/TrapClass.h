@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 
-enum TrapType { RopeLasso, RopeNetThrow, RopeNetTrap, WoodenCage };
+enum TrapType { RopeLasso, RopeNetTrap, RopeNetThrow, RopeLegTrap, WoodenCage };
 
 class PROJECTPANGEA_API TrapClass
 {

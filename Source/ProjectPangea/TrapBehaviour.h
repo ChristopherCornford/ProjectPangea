@@ -7,6 +7,7 @@
 #include "Components/ActorComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "CableComponent.h"
 #include "AnimalMotion.h"
 #include "TrapClass.h"
 #include "TrapBehaviour.generated.h"
@@ -42,13 +43,17 @@ private:
 	float v = 40.0f;
 	float PlayerToProjectileDistance;
 
-	float RopeNetThrownExhaustionIncr = 5.0f;
+	float RopeLassoExhaustionIncr = 5.0f;
+	float RopeNetThrowExhaustionIncr = 5.0f;
 	float RopeNetTrapExhaustionIncr = 5.0f;
+	float RopeLegTrapExhaustionIncr = 5.0f;
 	float WoodenCageExhaustionIncr = 5.0f;
 
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	void TrappedExhaustion(float ExhaustionIncrValue);
 
 	void SetTrapType(TrapType InType);
 
