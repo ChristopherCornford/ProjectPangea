@@ -8,6 +8,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+//For movement
+#include "Components/SkeletalMeshComponent.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AProjectPangeaCharacter
@@ -45,6 +47,7 @@ AProjectPangeaCharacter::AProjectPangeaCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+  dead = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -52,30 +55,35 @@ AProjectPangeaCharacter::AProjectPangeaCharacter()
 
 void AProjectPangeaCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
-	// Set up gameplay key bindings
-	check(PlayerInputComponent);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+  // Set up gameplay key bindings
+  check(PlayerInputComponent);
+  PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+  PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
-	PlayerInputComponent->BindAxis("MoveForward", this, &AProjectPangeaCharacter::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &AProjectPangeaCharacter::MoveRight);
+  PlayerInputComponent->BindAxis("MoveForward", this, &AProjectPangeaCharacter::MoveForward);
+  PlayerInputComponent->BindAxis("MoveRight", this, &AProjectPangeaCharacter::MoveRight);
 
-	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
-	// "turn" handles devices that provide an absolute delta, such as a mouse.
-	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("TurnRate", this, &AProjectPangeaCharacter::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("LookUpRate", this, &AProjectPangeaCharacter::LookUpAtRate);
+  // We have 2 versions of the rotation bindings to handle different kinds of devices differently
+  // "turn" handles devices that provide an absolute delta, such as a mouse.
+  // "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
+  PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+  PlayerInputComponent->BindAxis("TurnRate", this, &AProjectPangeaCharacter::TurnAtRate);
+  PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+  PlayerInputComponent->BindAxis("LookUpRate", this, &AProjectPangeaCharacter::LookUpAtRate);
 
-	// handle touch devices
-	PlayerInputComponent->BindTouch(IE_Pressed, this, &AProjectPangeaCharacter::TouchStarted);
-	PlayerInputComponent->BindTouch(IE_Released, this, &AProjectPangeaCharacter::TouchStopped);
+  // handle touch devices
+  PlayerInputComponent->BindTouch(IE_Pressed, this, &AProjectPangeaCharacter::TouchStarted);
+  PlayerInputComponent->BindTouch(IE_Released, this, &AProjectPangeaCharacter::TouchStopped);
 
-	// VR headset functionality
-	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AProjectPangeaCharacter::OnResetVR);
+  // VR headset functionality
+  PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AProjectPangeaCharacter::OnResetVR);
+
+  //For movement
+  PlayerInputComponent->BindAction("Focus", IE_Pressed, this, &AProjectPangeaCharacter::Focus);
+  PlayerInputComponent->BindAction("Focus", IE_Released, this, &AProjectPangeaCharacter::UnFocus);
+
+  PlayerInputComponent->BindAction("Die", IE_Pressed, this, &AProjectPangeaCharacter::Die);
 }
-
 
 void AProjectPangeaCharacter::OnResetVR()
 {
@@ -96,6 +104,10 @@ void AProjectPangeaCharacter::TurnAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+  if (focused_) {
+    FRotator temp = FollowCamera->GetComponentRotation();
+    SetActorRotation(FRotator(GetActorRotation().Pitch, temp.Yaw, GetActorRotation().Roll));
+  }
 }
 
 void AProjectPangeaCharacter::LookUpAtRate(float Rate)
@@ -106,29 +118,67 @@ void AProjectPangeaCharacter::LookUpAtRate(float Rate)
 
 void AProjectPangeaCharacter::MoveForward(float Value)
 {
-	if ((Controller != NULL) && (Value != 0.0f))
-	{
-		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+  if (Value != 0) {
+    forward_speed_ = FMath::InterpCircularIn(forward_speed_, 200.0f * Value, acceleration_ * GetWorld()->GetDeltaSeconds());
+  }
+  else {
+    forward_speed_ = FMath::Lerp(forward_speed_, 0.0f, acceleration_ * GetWorld()->GetDeltaSeconds()*0.1f);
+  }
 
-		// get forward vector
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		AddMovementInput(Direction, Value);
-	}
+  if ((Controller != NULL) && (Value != 0.0f))
+  {
+    // find out which way is forward
+    const FRotator Rotation = Controller->GetControlRotation();
+    const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+    // get forward vector
+    const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+    AddMovementInput(Direction, Value);
+  }
 }
 
 void AProjectPangeaCharacter::MoveRight(float Value)
 {
-	if ( (Controller != NULL) && (Value != 0.0f) )
-	{
-		// find out which way is right
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-	
-		// get right vector 
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-		// add movement in that direction
-		AddMovementInput(Direction, Value);
-	}
+  if (Value != 0) {
+    side_speed_ = FMath::InterpCircularIn(side_speed_, 200.0f * Value, acceleration_ * GetWorld()->GetDeltaSeconds());
+  }
+  else {
+    side_speed_ = FMath::Lerp(side_speed_, 0.0f, acceleration_ * GetWorld()->GetDeltaSeconds()*0.1f);
+  }
+
+  if ((Controller != NULL) && (Value != 0.0f))
+  {
+    // find out which way is right
+    const FRotator Rotation = Controller->GetControlRotation();
+    const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+    // get right vector 
+    const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+    // add movement in that direction
+    AddMovementInput(Direction, Value);
+  }
+}
+
+void AProjectPangeaCharacter::Focus() {
+  GetCharacterMovement()->bOrientRotationToMovement = false;
+  focused_ = true;
+}
+
+void AProjectPangeaCharacter::UnFocus() {
+  GetCharacterMovement()->bOrientRotationToMovement = true;
+  focused_ = false;
+}
+
+void AProjectPangeaCharacter::Die() {
+  if (!dead) {
+
+    GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    GetMesh()->SetAllBodiesSimulatePhysics(true);
+    GetMesh()->SetAllBodiesPhysicsBlendWeight(1.0f);
+    GetMesh()->WakeAllRigidBodies();
+  }
+  else {
+    GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    GetMesh()->SetAllBodiesSimulatePhysics(false);
+  }
 }

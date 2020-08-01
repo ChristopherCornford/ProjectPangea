@@ -29,6 +29,21 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
+  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+    float forward_speed_;
+
+  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+    float side_speed_;
+
+  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+    float speed_;
+
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
+    float acceleration_;
+
+  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+    bool focused_;
+
 protected:
 
 	/** Resets HMD orientation in VR. */
@@ -57,6 +72,19 @@ protected:
 
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
+  
+  UFUNCTION()
+    void Focus();
+
+  UFUNCTION()
+    void UnFocus();
+
+  UFUNCTION()
+    void Die();
+
+private:
+
+  bool dead;
 
 protected:
 	// APawn interface
