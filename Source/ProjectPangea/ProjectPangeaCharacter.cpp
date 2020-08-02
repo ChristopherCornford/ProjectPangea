@@ -48,6 +48,27 @@ AProjectPangeaCharacter::AProjectPangeaCharacter()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
   dead = false;
+
+
+  clothing.SetNumZeroed(num_cloth_elements_);
+  //initialization
+  sk_cape_ = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("sk_cape_"));
+  sk_cape_->SetupAttachment(GetMesh());
+  sk_chest_ = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("sk_chest_"));
+  sk_chest_->SetupAttachment(GetMesh());
+  sk_bracers_ = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("sk_bracers_"));
+  sk_bracers_->SetupAttachment(GetMesh());
+  sk_gloves_ = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("sk_gloves_"));
+  sk_gloves_->SetupAttachment(GetMesh());
+  sk_pants_ = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("sk_pants_"));
+  sk_pants_->SetupAttachment(GetMesh());
+  sk_shoes_ = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("sk_shoes_"));
+  sk_shoes_->SetupAttachment(GetMesh());
+  sk_eyebrows_ = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("sk_eyebrows_"));
+  sk_eyebrows_->SetupAttachment(GetMesh());
+  sk_beard_ = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("sk_beard_"));
+  sk_beard_->SetupAttachment(GetMesh());
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -83,6 +104,24 @@ void AProjectPangeaCharacter::SetupPlayerInputComponent(class UInputComponent* P
   PlayerInputComponent->BindAction("Focus", IE_Released, this, &AProjectPangeaCharacter::UnFocus);
 
   PlayerInputComponent->BindAction("Die", IE_Pressed, this, &AProjectPangeaCharacter::Die);
+}
+
+void AProjectPangeaCharacter::BeginPlay(){
+  Super::BeginPlay();
+
+  //Add extra meshes
+  clothing[0] = sk_cape_;
+  clothing[1] = sk_chest_;
+  clothing[2] = sk_bracers_;
+  clothing[3] = sk_gloves_;
+  clothing[4] = sk_pants_;
+  clothing[5] = sk_shoes_;
+  clothing[6] = sk_eyebrows_;
+  clothing[7] = sk_beard_;
+  for (int i = 0; i < num_cloth_elements_; ++i) {
+    if(clothing[i] != nullptr)
+      clothing[i]->SetMasterPoseComponent(GetMesh());
+  }
 }
 
 void AProjectPangeaCharacter::OnResetVR()
