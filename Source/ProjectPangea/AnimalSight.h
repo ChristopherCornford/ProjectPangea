@@ -37,7 +37,7 @@ private:
 
 	//Angle size variables
 	UPROPERTY(EditAnywhere)
-		float HalfAnimalSightAngle = 30.0f;
+		float HalfAnimalSightAngle = 15.0f;
 	UPROPERTY(EditAnywhere)
 		float AnimalSightReach = 1700.0f;
 
@@ -50,6 +50,8 @@ private:
 
 	UAnimalMotion* AnimalMotion;
 	UPlayerStats* PlayerStats;
+
+	FHitResult AnimalSightLineTrace;
 
 public:
 	// Called every frame

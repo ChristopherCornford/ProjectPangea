@@ -69,7 +69,20 @@ void UAnimalSight::IfInUnawareState()
 		if ((PlayerAngleFromSightCentre < HalfAnimalSightAngle) &&
 			(AnimalMotion->GetAnimalToPlayerVector().Size() < AnimalSightReach))
 		{
-			AnimalMotion->SetIsAlerted(true);
+			FCollisionQueryParams FCQP;
+			FCQP.AddIgnoredActor(GetOwner());
+			GetWorld()->LineTraceSingleByChannel(AnimalSightLineTrace,
+				GetOwner()->GetActorLocation(), GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation(),
+				ECollisionChannel::ECC_WorldStatic, FCQP);
+			if(AnimalSightLineTrace.GetActor() == GetWorld()->GetFirstPlayerController()->GetPawn())
+			{
+				UE_LOG(LogTemp, Log, TEXT("Trace reached player"));
+				AnimalMotion->SetIsAlerted(true);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Log, TEXT("TRACE INTERRUPTED!"));
+			}
 		}
 	}
 }
