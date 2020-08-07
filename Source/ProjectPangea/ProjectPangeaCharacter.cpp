@@ -10,6 +10,8 @@
 #include "GameFramework/SpringArmComponent.h"
 //For movement
 #include "Components/SkeletalMeshComponent.h"
+#include "BipedIKAnim.h"
+#include "Kismet/KismetMathLibrary.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AProjectPangeaCharacter
@@ -104,6 +106,8 @@ void AProjectPangeaCharacter::SetupPlayerInputComponent(class UInputComponent* P
   PlayerInputComponent->BindAction("Focus", IE_Released, this, &AProjectPangeaCharacter::UnFocus);
 
   PlayerInputComponent->BindAction("Die", IE_Pressed, this, &AProjectPangeaCharacter::Die);
+  PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AProjectPangeaCharacter::Attack);
+
 }
 
 void AProjectPangeaCharacter::BeginPlay(){
@@ -122,6 +126,9 @@ void AProjectPangeaCharacter::BeginPlay(){
     if(clothing[i] != nullptr)
       clothing[i]->SetMasterPoseComponent(GetMesh());
   }
+
+  anim_instance_ = Cast<UBipedIKAnim>(GetMesh()->GetAnimInstance());
+  attacking = false;
 }
 
 void AProjectPangeaCharacter::OnResetVR()
@@ -157,12 +164,13 @@ void AProjectPangeaCharacter::LookUpAtRate(float Rate)
 
 void AProjectPangeaCharacter::MoveForward(float Value)
 {
-  if (Value != 0) {
-    forward_speed_ = FMath::InterpCircularIn(forward_speed_, 200.0f * Value, acceleration_ * GetWorld()->GetDeltaSeconds());
-  }
-  else {
-    forward_speed_ = FMath::Lerp(forward_speed_, 0.0f, acceleration_ * GetWorld()->GetDeltaSeconds()*0.1f);
-  }
+  if (attacking) return;
+  //if (Value != 0) {
+  //  forward_speed_ = FMath::InterpCircularIn(forward_speed_, 200.0f * Value, acceleration_ * GetWorld()->GetDeltaSeconds());
+  //}
+  //else {
+  //  forward_speed_ = FMath::Lerp(forward_speed_, 0.0f, acceleration_ * GetWorld()->GetDeltaSeconds()*0.1f);
+  //}
 
   if ((Controller != NULL) && (Value != 0.0f))
   {
@@ -174,16 +182,23 @@ void AProjectPangeaCharacter::MoveForward(float Value)
     const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
     AddMovementInput(Direction, Value);
   }
+
+  
+
+  FVector local_velocity = UKismetMathLibrary::InverseTransformDirection(GetTransform(), GetVelocity());
+  forward_speed_ = local_velocity.X;
+  side_speed_ = local_velocity.Y;
 }
 
 void AProjectPangeaCharacter::MoveRight(float Value)
 {
-  if (Value != 0) {
-    side_speed_ = FMath::InterpCircularIn(side_speed_, 200.0f * Value, acceleration_ * GetWorld()->GetDeltaSeconds());
-  }
-  else {
-    side_speed_ = FMath::Lerp(side_speed_, 0.0f, acceleration_ * GetWorld()->GetDeltaSeconds()*0.1f);
-  }
+  if (attacking) return;
+  //if (Value != 0) {
+  //  side_speed_ = FMath::InterpCircularIn(side_speed_, 200.0f * Value, acceleration_ * GetWorld()->GetDeltaSeconds());
+  //}
+  //else {
+  //  side_speed_ = FMath::Lerp(side_speed_, 0.0f, acceleration_ * GetWorld()->GetDeltaSeconds()*0.1f);
+  //}
 
   if ((Controller != NULL) && (Value != 0.0f))
   {
@@ -220,4 +235,17 @@ void AProjectPangeaCharacter::Die() {
     GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     GetMesh()->SetAllBodiesSimulatePhysics(false);
   }
+}
+
+void AProjectPangeaCharacter::Attack() {
+  float time_remain = anim_instance_->Attack(0);
+  if (time_remain != 0.0f) {
+    attacking = true;
+    GetWorld()->GetTimerManager().SetTimer(attack_timer_, this, &AProjectPangeaCharacter::EndAttack, time_remain, false);
+  }
+}
+
+
+void AProjectPangeaCharacter::EndAttack() {
+  attacking = false;
 }

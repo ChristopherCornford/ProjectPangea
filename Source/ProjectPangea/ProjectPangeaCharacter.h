@@ -7,6 +7,7 @@
 #include "ProjectPangeaCharacter.generated.h"
 
 class USkeletalMeshComponent;
+class UBipedIKAnim;
 
 UCLASS(config=Game)
 class AProjectPangeaCharacter : public ACharacter
@@ -56,13 +57,10 @@ public:
     float side_speed_;
 
   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
-    float speed_;
-
-  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
-    float acceleration_;
-
-  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
     bool focused_;
+
+  bool attacking;
+  FTimerHandle attack_timer_;
 
   //Extra meshes (later on component)
   
@@ -81,7 +79,7 @@ public:
   const int num_cloth_elements_ = 8;
 
   TArray<USkeletalMeshComponent *> clothing;
-  
+  UBipedIKAnim *anim_instance_;
 protected:
 
 	/** Resets HMD orientation in VR. */
@@ -122,6 +120,11 @@ protected:
   UFUNCTION()
     void Die();
 
+  UFUNCTION()
+    void Attack();
+
+  UFUNCTION()
+    void EndAttack();
 private:
 
   bool dead;

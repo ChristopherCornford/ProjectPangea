@@ -2,17 +2,20 @@
 
 
 #include "BipedIKAnim.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "DrawDebugHelpers.h"
 
 #define RADtoDEG 57.295779513
 
 void UBipedIKAnim::NativeUpdateAnimation(float DeltaSeconds) {
   if (owner_ == nullptr) {
-    owner_ = GetOwningActor();
-    actor_mesh_ = Cast<USkeletalMeshComponent>(owner_->GetComponentByClass(USkeletalMeshComponent::StaticClass()));
+    owner_ = Cast<ACharacter>(GetOwningActor());
   }
-
-  FootIK(DeltaSeconds);
+  if (owner_ != nullptr) {
+    actor_mesh_ = Cast<USkeletalMeshComponent>(owner_->GetComponentByClass(USkeletalMeshComponent::StaticClass()));
+    FootIK(DeltaSeconds);
+  }
 }
 
 FHitResult UBipedIKAnim::CheckTrace(FVector basepos, FVector endpos) {
@@ -110,6 +113,14 @@ void UBipedIKAnim::FootIK(float deltatime){
     right_rotation = FVector(roll, pitch, 0.0f);
   }
 
+  UCharacterMovementComponent *charmov = owner_->GetCharacterMovement();
+  if (charmov != nullptr) {
+    if (charmov->IsFalling()) {
+      ik_alpha_ = 0.0f;
+      GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Red, "yee");
+    } else ik_alpha_ = 1.0f;
+  }
+
 
   if (draw_debug_) {
     DrawDebugCapsule(GetWorld(),owner_->GetActorLocation(),96.0f,30.f,
@@ -127,4 +138,12 @@ void UBipedIKAnim::FootIK(float deltatime){
   left_foot_offset_ = right_hip_offset_ - FMath::Clamp(left_foot_offset_, 0.0f, max_height_check_);
   //Add both offsets for when both legs are under capsule
   hip_offset_ = left_hip_offset_ + right_hip_offset_;
+}
+
+float UBipedIKAnim::Attack(int attack_index) {
+  float montage_duration = 0.0f;
+  if (attack_index < attack_montages_.Num()) {
+    montage_duration = Montage_Play(attack_montages_[attack_index]);
+  }
+  return montage_duration;
 }

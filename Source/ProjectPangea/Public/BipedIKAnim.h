@@ -9,6 +9,9 @@
 /**
  * 
  */
+
+class ACharacter;
+
 UCLASS()
 class PROJECTPANGEA_API UBipedIKAnim : public UAnimInstance
 {
@@ -63,13 +66,21 @@ public:
   //hip transform
   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, category = "AnimVars")
     float hip_offset_;
-
+  
+  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, category = "AnimVars")
+    float ik_alpha_;
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, category = "AnimVars | ActionAnims")
+    TArray<UAnimMontage*> attack_montages_;
+  
+  UFUNCTION()
+    float Attack(int attack_index); //To do: change parameter to enum
+  
 protected:
   float left_hip_offset_;
   float right_hip_offset_;
 
 
-  AActor *owner_;
+  ACharacter *owner_;
   USkeletalMeshComponent *actor_mesh_;
 
   virtual void NativeUpdateAnimation(float DeltaSeconds) override;
