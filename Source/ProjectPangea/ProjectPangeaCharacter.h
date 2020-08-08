@@ -125,6 +125,9 @@ protected:
 
   UFUNCTION()
     void EndAttack();
+
+  UFUNCTION()
+    void SwitchCrouched();
 private:
 
   bool dead;

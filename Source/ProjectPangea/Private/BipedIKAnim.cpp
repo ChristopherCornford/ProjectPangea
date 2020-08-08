@@ -53,6 +53,21 @@ void UBipedIKAnim::FootIK(float deltatime){
   FVector left_foot_loc = actor_mesh_->GetSocketLocation(left_socket_);
   left_foot_loc.Z = actor_loc.Z;
 
+  //Special movement action check
+  UCharacterMovementComponent *charmov = owner_->GetCharacterMovement();
+  if (charmov != nullptr) {
+    if (charmov->IsFalling()) {
+      ik_alpha_ = 0.0f;
+    }
+    else ik_alpha_ = 1.0f;
+    if (charmov->IsCrouching()) {
+      hip_height_ = base_hip_height_crouched_;
+    }
+    else {
+      hip_height_ = base_hip_height_;
+    }
+  }
+
   FHitResult left_trace = CheckTrace(left_foot_loc,
     left_foot_loc - FVector(0.0f, 0.0f, hip_height_ + max_height_check_));
 
@@ -112,15 +127,6 @@ void UBipedIKAnim::FootIK(float deltatime){
 
     right_rotation = FVector(roll, pitch, 0.0f);
   }
-
-  UCharacterMovementComponent *charmov = owner_->GetCharacterMovement();
-  if (charmov != nullptr) {
-    if (charmov->IsFalling()) {
-      ik_alpha_ = 0.0f;
-      GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Red, "yee");
-    } else ik_alpha_ = 1.0f;
-  }
-
 
   if (draw_debug_) {
     DrawDebugCapsule(GetWorld(),owner_->GetActorLocation(),96.0f,30.f,

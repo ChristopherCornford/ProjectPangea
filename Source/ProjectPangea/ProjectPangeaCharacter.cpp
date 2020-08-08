@@ -107,6 +107,7 @@ void AProjectPangeaCharacter::SetupPlayerInputComponent(class UInputComponent* P
 
   PlayerInputComponent->BindAction("Die", IE_Pressed, this, &AProjectPangeaCharacter::Die);
   PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AProjectPangeaCharacter::Attack);
+  PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AProjectPangeaCharacter::SwitchCrouched);
 
 }
 
@@ -150,10 +151,10 @@ void AProjectPangeaCharacter::TurnAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
-  if (focused_) {
-    FRotator temp = FollowCamera->GetComponentRotation();
-    SetActorRotation(FRotator(GetActorRotation().Pitch, temp.Yaw, GetActorRotation().Roll));
-  }
+  //if (focused_) {
+  //  FRotator temp = FollowCamera->GetComponentRotation();
+  //  SetActorRotation(FRotator(GetActorRotation().Pitch, temp.Yaw, GetActorRotation().Roll));
+  //}
 }
 
 void AProjectPangeaCharacter::LookUpAtRate(float Rate)
@@ -215,11 +216,13 @@ void AProjectPangeaCharacter::MoveRight(float Value)
 
 void AProjectPangeaCharacter::Focus() {
   GetCharacterMovement()->bOrientRotationToMovement = false;
+  GetCharacterMovement()->bUseControllerDesiredRotation = true;
   focused_ = true;
 }
 
 void AProjectPangeaCharacter::UnFocus() {
   GetCharacterMovement()->bOrientRotationToMovement = true;
+  GetCharacterMovement()->bUseControllerDesiredRotation = false;
   focused_ = false;
 }
 
@@ -248,4 +251,12 @@ void AProjectPangeaCharacter::Attack() {
 
 void AProjectPangeaCharacter::EndAttack() {
   attacking = false;
+}
+
+void AProjectPangeaCharacter::SwitchCrouched() {
+  if (!GetCharacterMovement()->IsCrouching())
+    GetCharacterMovement()->bWantsToCrouch = true;
+  else GetCharacterMovement()->bWantsToCrouch = false;
+  GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Red, "yee");
+
 }
