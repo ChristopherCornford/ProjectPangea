@@ -1,11 +1,11 @@
 {
 	"TargetName": "ProjectPangeaEditor",
 	"Platform": "Win64",
-	"Configuration": "DebugGame",
+	"Configuration": "Development",
 	"TargetType": "Editor",
 	"Architecture": "",
 	"Project": "../../ProjectPangea.uproject",
-	"Launch": "$(EngineDir)/Binaries/Win64/UE4Editor-Win64-DebugGame.exe",
+	"Launch": "$(EngineDir)/Binaries/Win64/UE4Editor.exe",
 	"Version": 
 	{
 		"MajorVersion": 4,
@@ -21,11 +21,11 @@
 	},
 	"BuildProducts": [
 		{
-			"Path": "$(EngineDir)/Binaries/Win64/UE4Editor-Win64-DebugGame.exe",
+			"Path": "$(EngineDir)/Binaries/Win64/UE4Editor.exe",
 			"Type": "Executable"
 		},
 		{
-			"Path": "$(EngineDir)/Binaries/Win64/UE4Editor-Win64-DebugGame-Cmd.exe",
+			"Path": "$(EngineDir)/Binaries/Win64/UE4Editor-Cmd.exe",
 			"Type": "Executable"
 		},
 		{
@@ -549,11 +549,11 @@
 			"Type": "DynamicLibrary"
 		},
 		{
-			"Path": "$(ProjectDir)/Binaries/Win64/UE4Editor-ProjectPangea-Win64-DebugGame.dll",
+			"Path": "$(ProjectDir)/Binaries/Win64/UE4Editor-ProjectPangea.dll",
 			"Type": "DynamicLibrary"
 		},
 		{
-			"Path": "$(ProjectDir)/Binaries/Win64/UE4Editor-ProjectPangea-Win64-DebugGame.pdb",
+			"Path": "$(ProjectDir)/Binaries/Win64/UE4Editor-ProjectPangea.pdb",
 			"Type": "SymbolFile"
 		},
 		{
@@ -2321,7 +2321,7 @@
 			"Type": "RequiredResource"
 		},
 		{
-			"Path": "$(ProjectDir)/Binaries/Win64/UE4Editor-Win64-DebugGame.modules",
+			"Path": "$(ProjectDir)/Binaries/Win64/UE4Editor.modules",
 			"Type": "RequiredResource"
 		},
 		{
