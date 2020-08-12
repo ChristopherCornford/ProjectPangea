@@ -15,6 +15,7 @@ void UBipedIKAnim::NativeUpdateAnimation(float DeltaSeconds) {
   if (owner_ != nullptr) {
     actor_mesh_ = Cast<USkeletalMeshComponent>(owner_->GetComponentByClass(USkeletalMeshComponent::StaticClass()));
     FootIK(DeltaSeconds);
+    AnimActions();
   }
 }
 
@@ -152,4 +153,22 @@ float UBipedIKAnim::Attack(int attack_index) {
     montage_duration = Montage_Play(attack_montages_[attack_index]);
   }
   return montage_duration;
+}
+
+void UBipedIKAnim::AnimActions() {
+  
+  
+  FVector direction = owner_->GetCharacterMovement()->GetLastInputVector();
+  FVector velocity = owner_->GetVelocity();
+  velocity.Normalize();
+  if (draw_debug_) {
+    DrawDebugDirectionalArrow(GetWorld(), owner_->GetActorLocation(), owner_->GetActorLocation() + direction * 100.0f, 100.0f, FColor::Green);
+    DrawDebugDirectionalArrow(GetWorld(), owner_->GetActorLocation(), owner_->GetActorLocation() + velocity * 100.0f, 100.0f, FColor::Yellow);
+    //DrawDebugSphere(GetWorld(), owner_->GetActorLocation() + direction * 100.0f, 50.0f, 10.0f, FColor::Blue);
+    GEngine->AddOnScreenDebugMessage(10, 0.1f, FColor::Red, FString("Dot product: ") + FString::SanitizeFloat(FVector::DotProduct(direction, velocity)));
+  }
+
+  if (FVector::DotProduct(direction, velocity) < -0.5 && !Montage_IsPlaying(switch_180_)) {
+    Montage_Play(switch_180_);
+  }
 }

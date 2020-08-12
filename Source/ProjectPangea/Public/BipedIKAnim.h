@@ -76,6 +76,9 @@ public:
   UPROPERTY(EditAnywhere, BlueprintReadOnly, category = "AnimVars | ActionAnims")
     TArray<UAnimMontage*> attack_montages_;
   
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, category = "AnimVars | ActionAnims")
+    UAnimMontage* switch_180_;
+
   UFUNCTION()
     float Attack(int attack_index); //To do: change parameter to enum
   
@@ -94,4 +97,5 @@ protected:
 
   void FootIK(float deltatime);
 
+  void AnimActions();
 };

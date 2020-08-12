@@ -59,7 +59,19 @@ public:
   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
     bool focused_;
 
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
+    float walking_speed_;
+
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
+    float running_speed_;
+
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
+    float crouching_speed_;
+
   bool attacking;
+
+  UPROPERTY(BlueprintReadOnly, Category = "Movement")
+  bool running;
   FTimerHandle attack_timer_;
 
   //Extra meshes (later on component)
@@ -128,6 +140,12 @@ protected:
 
   UFUNCTION()
     void SwitchCrouched();
+
+  UFUNCTION()
+    void Run();
+
+  UFUNCTION()
+    void StopRun();
 private:
 
   bool dead;

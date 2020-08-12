@@ -12,6 +12,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "BipedIKAnim.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "DrawDebugHelpers.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AProjectPangeaCharacter
@@ -71,6 +72,10 @@ AProjectPangeaCharacter::AProjectPangeaCharacter()
   sk_beard_ = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("sk_beard_"));
   sk_beard_->SetupAttachment(GetMesh());
 
+  //Movement vars
+  walking_speed_ = 160.0f;
+  crouching_speed_ = 160.0f;
+  running_speed_ = 320.0f;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -108,6 +113,9 @@ void AProjectPangeaCharacter::SetupPlayerInputComponent(class UInputComponent* P
   PlayerInputComponent->BindAction("Die", IE_Pressed, this, &AProjectPangeaCharacter::Die);
   PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AProjectPangeaCharacter::Attack);
   PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AProjectPangeaCharacter::SwitchCrouched);
+  
+  PlayerInputComponent->BindAction("Run", IE_Pressed, this, &AProjectPangeaCharacter::Run);
+  PlayerInputComponent->BindAction("Run", IE_Released, this, &AProjectPangeaCharacter::StopRun);
 
 }
 
@@ -130,6 +138,9 @@ void AProjectPangeaCharacter::BeginPlay(){
 
   anim_instance_ = Cast<UBipedIKAnim>(GetMesh()->GetAnimInstance());
   attacking = false;
+  running = false;
+  GetCharacterMovement()->MaxWalkSpeed = walking_speed_;
+  GetCharacterMovement()->MaxWalkSpeedCrouched = crouching_speed_;
 }
 
 void AProjectPangeaCharacter::OnResetVR()
@@ -166,12 +177,6 @@ void AProjectPangeaCharacter::LookUpAtRate(float Rate)
 void AProjectPangeaCharacter::MoveForward(float Value)
 {
   if (attacking) return;
-  //if (Value != 0) {
-  //  forward_speed_ = FMath::InterpCircularIn(forward_speed_, 200.0f * Value, acceleration_ * GetWorld()->GetDeltaSeconds());
-  //}
-  //else {
-  //  forward_speed_ = FMath::Lerp(forward_speed_, 0.0f, acceleration_ * GetWorld()->GetDeltaSeconds()*0.1f);
-  //}
 
   if ((Controller != NULL) && (Value != 0.0f))
   {
@@ -184,8 +189,6 @@ void AProjectPangeaCharacter::MoveForward(float Value)
     AddMovementInput(Direction, Value);
   }
 
-  
-
   FVector local_velocity = UKismetMathLibrary::InverseTransformDirection(GetTransform(), GetVelocity());
   forward_speed_ = local_velocity.X;
   side_speed_ = local_velocity.Y;
@@ -194,12 +197,6 @@ void AProjectPangeaCharacter::MoveForward(float Value)
 void AProjectPangeaCharacter::MoveRight(float Value)
 {
   if (attacking) return;
-  //if (Value != 0) {
-  //  side_speed_ = FMath::InterpCircularIn(side_speed_, 200.0f * Value, acceleration_ * GetWorld()->GetDeltaSeconds());
-  //}
-  //else {
-  //  side_speed_ = FMath::Lerp(side_speed_, 0.0f, acceleration_ * GetWorld()->GetDeltaSeconds()*0.1f);
-  //}
 
   if ((Controller != NULL) && (Value != 0.0f))
   {
@@ -215,6 +212,7 @@ void AProjectPangeaCharacter::MoveRight(float Value)
 }
 
 void AProjectPangeaCharacter::Focus() {
+  if (running) StopRun();
   GetCharacterMovement()->bOrientRotationToMovement = false;
   GetCharacterMovement()->bUseControllerDesiredRotation = true;
   focused_ = true;
@@ -259,4 +257,16 @@ void AProjectPangeaCharacter::SwitchCrouched() {
   else GetCharacterMovement()->bWantsToCrouch = false;
   GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Red, "yee");
 
+}
+
+void AProjectPangeaCharacter::Run() {
+  if (focused_) return;
+  running = true;
+  GetCharacterMovement()->MaxWalkSpeed = running_speed_;
+}
+
+void AProjectPangeaCharacter::StopRun() {
+  if (focused_) return;
+  running = false;
+  GetCharacterMovement()->MaxWalkSpeed = walking_speed_;
 }
