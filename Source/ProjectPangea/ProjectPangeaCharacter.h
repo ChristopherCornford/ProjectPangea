@@ -59,11 +59,24 @@ public:
   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
     bool focused_;
 
-  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement | Walking")
     float walking_speed_;
 
-  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement | Walking")
+    float walking_rotation_speed_;
+
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement | Walking")
+    float walking_friction_;
+
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement | Running")
     float running_speed_;
+  
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement | Walking")
+    float running_friction_;
+
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement | Walking")
+    float running_rotation_speed_;
+
 
   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
     float crouching_speed_;

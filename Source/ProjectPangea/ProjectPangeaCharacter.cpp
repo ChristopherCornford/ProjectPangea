@@ -73,9 +73,15 @@ AProjectPangeaCharacter::AProjectPangeaCharacter()
   sk_beard_->SetupAttachment(GetMesh());
 
   //Movement vars
-  walking_speed_ = 160.0f;
   crouching_speed_ = 160.0f;
+  
+  walking_speed_ = 160.0f;
+  walking_rotation_speed_ = 270.0f;
+  walking_friction_ = 4.0f;
+
   running_speed_ = 320.0f;
+  running_rotation_speed_ = 120.0f;
+  running_friction_ = 8.0f;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -141,6 +147,8 @@ void AProjectPangeaCharacter::BeginPlay(){
   running = false;
   GetCharacterMovement()->MaxWalkSpeed = walking_speed_;
   GetCharacterMovement()->MaxWalkSpeedCrouched = crouching_speed_;
+  GetCharacterMovement()->RotationRate.Yaw = walking_rotation_speed_;
+  GetCharacterMovement()->GroundFriction = walking_friction_;
 }
 
 void AProjectPangeaCharacter::OnResetVR()
@@ -263,10 +271,14 @@ void AProjectPangeaCharacter::Run() {
   if (focused_) return;
   running = true;
   GetCharacterMovement()->MaxWalkSpeed = running_speed_;
+  GetCharacterMovement()->RotationRate.Yaw = running_rotation_speed_;
+  GetCharacterMovement()->GroundFriction = running_friction_;
 }
 
 void AProjectPangeaCharacter::StopRun() {
   if (focused_) return;
   running = false;
   GetCharacterMovement()->MaxWalkSpeed = walking_speed_;
+  GetCharacterMovement()->RotationRate.Yaw = walking_rotation_speed_;
+  GetCharacterMovement()->GroundFriction = walking_friction_;
 }
