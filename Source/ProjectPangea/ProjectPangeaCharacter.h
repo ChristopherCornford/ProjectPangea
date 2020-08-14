@@ -159,6 +159,9 @@ protected:
 
   UFUNCTION()
     void StopRun();
+
+  UFUNCTION()
+    void Zoom(float value);
 private:
 
   bool dead;

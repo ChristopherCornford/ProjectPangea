@@ -122,6 +122,8 @@ void AProjectPangeaCharacter::SetupPlayerInputComponent(class UInputComponent* P
   
   PlayerInputComponent->BindAction("Run", IE_Pressed, this, &AProjectPangeaCharacter::Run);
   PlayerInputComponent->BindAction("Run", IE_Released, this, &AProjectPangeaCharacter::StopRun);
+  
+  PlayerInputComponent->BindAxis("Zoom", this, &AProjectPangeaCharacter::Zoom);
 
 }
 
@@ -281,4 +283,8 @@ void AProjectPangeaCharacter::StopRun() {
   GetCharacterMovement()->MaxWalkSpeed = walking_speed_;
   GetCharacterMovement()->RotationRate.Yaw = walking_rotation_speed_;
   GetCharacterMovement()->GroundFriction = walking_friction_;
+}
+
+void AProjectPangeaCharacter::Zoom(float value) {
+  CameraBoom->TargetArmLength += value * -6.0f;
 }
