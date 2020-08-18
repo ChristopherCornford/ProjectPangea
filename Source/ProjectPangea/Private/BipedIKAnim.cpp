@@ -4,6 +4,8 @@
 #include "BipedIKAnim.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
+
 #include "DrawDebugHelpers.h"
 
 #define RADtoDEG 57.295779513
@@ -156,16 +158,24 @@ float UBipedIKAnim::Attack(int attack_index) {
 }
 
 void UBipedIKAnim::AnimActions() {
-  
-  
   FVector direction = owner_->GetCharacterMovement()->GetLastInputVector();
+  direction.Normalize();
   FVector velocity = owner_->GetVelocity();
   velocity.Normalize();
+  float dot = FVector::DotProduct(velocity, direction);
+  input_angle_ = RADtoDEG * FMath::Acos(dot);
+
+  // Negative angles
+  FVector cross = FVector::CrossProduct(velocity, direction);
+  
+  //FVector local_player_position = UKismetMathLibrary::InverseTransformLocation(owner_->GetTransform(), player_->GetActorLocation());
+  if (cross.Z < 0.0f) {
+    input_angle_ *= -1.0f;
+  }
   if (draw_debug_) {
     DrawDebugDirectionalArrow(GetWorld(), owner_->GetActorLocation(), owner_->GetActorLocation() + direction * 100.0f, 100.0f, FColor::Green);
     DrawDebugDirectionalArrow(GetWorld(), owner_->GetActorLocation(), owner_->GetActorLocation() + velocity * 100.0f, 100.0f, FColor::Yellow);
-    //DrawDebugSphere(GetWorld(), owner_->GetActorLocation() + direction * 100.0f, 50.0f, 10.0f, FColor::Blue);
-    GEngine->AddOnScreenDebugMessage(10, 0.1f, FColor::Red, FString("Dot product: ") + FString::SanitizeFloat(FVector::DotProduct(direction, velocity)));
+    GEngine->AddOnScreenDebugMessage(10, 0.1f, FColor::Red, FString("Angle: ") + FString::SanitizeFloat(input_angle_));
   }
 
   if (FVector::DotProduct(direction, velocity) < -0.5 && !Montage_IsPlaying(switch_180_)) {

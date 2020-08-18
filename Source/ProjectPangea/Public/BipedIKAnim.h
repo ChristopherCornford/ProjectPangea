@@ -73,6 +73,9 @@ public:
   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, category = "AnimVars | IK Result")
     float ik_alpha_;
 
+  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, category = "AnimVars | General Results")
+    float input_angle_;
+
   UPROPERTY(EditAnywhere, BlueprintReadOnly, category = "AnimVars | ActionAnims")
     TArray<UAnimMontage*> attack_montages_;
   
