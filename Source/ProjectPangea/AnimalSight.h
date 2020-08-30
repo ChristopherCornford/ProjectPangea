@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "AnimalMotion.h"
+#include "PlayerStealthTracker.h"
 #include "PlayerStats.h"
 #include "AnimalSight.generated.h"
 

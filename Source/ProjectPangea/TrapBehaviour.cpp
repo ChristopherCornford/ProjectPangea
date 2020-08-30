@@ -29,7 +29,7 @@ void UTrapBehaviour::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 
 	if (IsReadied)
 	{
-		if (Type == RopeNetThrow)
+		if (Type == RopeNetThrow || Type == RopeLasso)
 		{
 			FVector PreppedTrapLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
 			PreppedTrapLocation += (70.0f * GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorForwardVector());

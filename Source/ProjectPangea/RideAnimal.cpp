@@ -24,7 +24,7 @@ void URideAnimal::BeginPlay()
 
 	AnimalMotion = GetOwner()->FindComponentByClass<UAnimalMotion>();
 	RidingPrecedence = GetWorld()->GetFirstPlayerController()->GetPawn()->FindComponentByClass<URidingPrecedence>();
-	PlayerStateTracker = GetWorld()->GetFirstPlayerController()->GetPawn()->FindComponentByClass<UPlayerStateTracker>();
+	PlayerRidingTracker = GetWorld()->GetFirstPlayerController()->GetPawn()->FindComponentByClass<UPlayerRidingTracker>();
 
 	SaveInitialStates(); //Only called once
 
@@ -86,9 +86,9 @@ void URideAnimal::SaveInitialStates()
 //Riding general
 void URideAnimal::UpdateIsRiding()
 {
-	if (AnimalMotion->GetIsTamed() && !AnimalMotion->GetIsRiding() && !PlayerStateTracker->GetIsPlayerRiding())
+	if (AnimalMotion->GetIsTamed() && !AnimalMotion->GetIsRiding() && !PlayerRidingTracker->GetIsPlayerRiding())
 	{
-		if (!PlayerStateTracker->GetDidJustDismount())
+		if (!PlayerRidingTracker->GetDidJustDismount())
 		{
 			if (AnimalMotion->GetAnimalToPlayerVector().Size() < RidingRegionDistance)
 			{
@@ -105,8 +105,8 @@ void URideAnimal::UpdateIsRiding()
 		if (GetWorld()->GetFirstPlayerController()->WasInputKeyJustPressed("R"))
 		{
 			AnimalMotion->SetIsRiding(false);
-			PlayerStateTracker->SetIsPlayerRiding(false);
-			PlayerStateTracker->SetDidJustDismount(true);
+			PlayerRidingTracker->SetIsPlayerRiding(false);
+			PlayerRidingTracker->SetDidJustDismount(true);
 
 			SetupDismountState();
 
@@ -120,7 +120,7 @@ void URideAnimal::UpdateIsRiding()
 void URideAnimal::OnReceivedRequest()
 {
 	AnimalMotion->SetIsRiding(true);
-	PlayerStateTracker->SetIsPlayerRiding(true);
+	PlayerRidingTracker->SetIsPlayerRiding(true);
 
 	SetupMountState();
 

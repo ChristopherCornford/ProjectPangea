@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PlayerStateTracker.h"
+#include "PlayerRidingTracker.h"
 
 // Sets default values for this component's properties
-UPlayerStateTracker::UPlayerStateTracker()
+UPlayerRidingTracker::UPlayerRidingTracker()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
@@ -13,14 +13,14 @@ UPlayerStateTracker::UPlayerStateTracker()
 
 
 // Called when the game starts
-void UPlayerStateTracker::BeginPlay()
+void UPlayerRidingTracker::BeginPlay()
 {
-	Super::BeginPlay();	
+	Super::BeginPlay();
 }
 
 
 // Called every frame
-void UPlayerStateTracker::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UPlayerRidingTracker::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
@@ -36,7 +36,7 @@ void UPlayerStateTracker::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	}
 }
 
-void UPlayerStateTracker::SetIsPlayerRiding(bool InputBool)
+void UPlayerRidingTracker::SetIsPlayerRiding(bool InputBool)
 {
 	IsPlayerRiding = InputBool;
 	if (InputBool)
@@ -48,15 +48,15 @@ void UPlayerStateTracker::SetIsPlayerRiding(bool InputBool)
 		UE_LOG(LogTemp, Log, TEXT("IsPlayerRiding = false"));
 	}
 }
-bool UPlayerStateTracker::GetIsPlayerRiding()
+bool UPlayerRidingTracker::GetIsPlayerRiding()
 {
 	return IsPlayerRiding;
 }
-void UPlayerStateTracker::SetDidJustDismount(bool InputBool)
+void UPlayerRidingTracker::SetDidJustDismount(bool InputBool)
 {
 	DidJustDismount = InputBool;
 }
-bool UPlayerStateTracker::GetDidJustDismount()
+bool UPlayerRidingTracker::GetDidJustDismount()
 {
 	return DidJustDismount;
 }

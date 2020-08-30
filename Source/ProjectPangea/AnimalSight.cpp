@@ -76,8 +76,16 @@ void UAnimalSight::IfInUnawareState()
 				ECollisionChannel::ECC_WorldStatic, FCQP);
 			if(AnimalSightLineTrace.GetActor() == GetWorld()->GetFirstPlayerController()->GetPawn())
 			{
-				UE_LOG(LogTemp, Log, TEXT("Trace reached player"));
-				AnimalMotion->SetIsAlerted(true);
+				if (GetWorld()->GetFirstPlayerController()->GetPawn()->
+					FindComponentByClass<UPlayerStealthTracker>()->GetIsPlayerHiding() == false)
+				{
+					UE_LOG(LogTemp, Log, TEXT("Trace reached player"));
+					AnimalMotion->SetIsAlerted(true);
+				}
+				else
+				{
+					UE_LOG(LogTemp, Log, TEXT("Player hiding in long grass"));
+				}
 			}
 			else
 			{

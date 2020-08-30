@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "PlayerStateTracker.generated.h"
+#include "PlayerRidingTracker.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class PROJECTPANGEA_API UPlayerStateTracker : public UActorComponent
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+class PROJECTPANGEA_API UPlayerRidingTracker : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
-	UPlayerStateTracker();
+	UPlayerRidingTracker();
 
 protected:
 	// Called when the game starts
@@ -26,7 +26,7 @@ private:
 
 	int DismountCount = 0;
 
-public:	
+public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 

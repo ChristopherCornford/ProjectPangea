@@ -10,7 +10,7 @@
 #include "Camera/CameraComponent.h"
 #include "AnimalMotion.h"
 #include "RidingPrecedence.h"
-#include "PlayerStateTracker.h"
+#include "PlayerRidingTracker.h"
 #include "RideAnimal.generated.h"
 
 
@@ -58,7 +58,7 @@ private:
 
 	UAnimalMotion* AnimalMotion;
 	URidingPrecedence* RidingPrecedence;
-	UPlayerStateTracker* PlayerStateTracker;
+	UPlayerRidingTracker* PlayerRidingTracker;
 
 	bool WasRideRequestSent = false;
 	bool IsRideRequestFinished = false;
