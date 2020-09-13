@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "ProjectPangeaCharacter.generated.h"
 
+class USkeletalMeshComponent;
+class UBipedIKAnim;
+
 UCLASS(config=Game)
 class AProjectPangeaCharacter : public ACharacter
 {
@@ -18,10 +21,28 @@ class AProjectPangeaCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+
 public:
 	AProjectPangeaCharacter();
 
-	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
+  //Meshes
+  UPROPERTY(VisibleAnywhere, Category = "Components")
+    USkeletalMeshComponent *sk_cape_;
+  UPROPERTY(VisibleAnywhere, Category = "Components")
+    USkeletalMeshComponent *sk_chest_;
+  UPROPERTY(VisibleAnywhere, Category = "Components")
+    USkeletalMeshComponent *sk_bracers_;
+  UPROPERTY(VisibleAnywhere, Category = "Components")
+    USkeletalMeshComponent *sk_gloves_;
+  UPROPERTY(VisibleAnywhere, Category = "Components")
+    USkeletalMeshComponent *sk_pants_;
+  UPROPERTY(VisibleAnywhere, Category = "Components")
+    USkeletalMeshComponent *sk_shoes_;
+  UPROPERTY(VisibleAnywhere, Category = "Components")
+    USkeletalMeshComponent *sk_eyebrows_;
+  UPROPERTY(VisibleAnywhere, Category = "Components")
+    USkeletalMeshComponent *sk_beard_;
+  /** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseTurnRate;
 
@@ -29,6 +50,61 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
+  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+    float forward_speed_;
+
+  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+    float side_speed_;
+
+  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+    bool focused_;
+
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement | Walking")
+    float walking_speed_;
+
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement | Walking")
+    float walking_rotation_speed_;
+
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement | Walking")
+    float walking_friction_;
+
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement | Running")
+    float running_speed_;
+  
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement | Walking")
+    float running_friction_;
+
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement | Walking")
+    float running_rotation_speed_;
+
+
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
+    float crouching_speed_;
+
+  bool attacking;
+
+  UPROPERTY(BlueprintReadOnly, Category = "Movement")
+  bool running;
+  FTimerHandle attack_timer_;
+
+  //Extra meshes (later on component)
+  
+  //To identify cloth meshes
+  enum ClothingItem {
+    kCape = 0,
+    kChest = 1, //Examples
+    kBracers = 2,
+    kGloves = 3,
+    kPants = 4,
+    kShoes = 5,
+    kEyebrows = 6,
+    kBeard = 7, //more to be added later
+  };
+
+  const int num_cloth_elements_ = 8;
+
+  TArray<USkeletalMeshComponent *> clothing;
+  UBipedIKAnim *anim_instance_;
 protected:
 
 	/** Resets HMD orientation in VR. */
@@ -39,6 +115,8 @@ protected:
 
 	/** Called for side to side input */
 	void MoveRight(float Value);
+
+  virtual void BeginPlay() override;
 
 	/** 
 	 * Called via input to turn at a given rate. 
@@ -57,6 +135,36 @@ protected:
 
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
+  
+  UFUNCTION()
+    void Focus();
+
+  UFUNCTION()
+    void UnFocus();
+
+  UFUNCTION()
+    void Die();
+
+  UFUNCTION()
+    void Attack();
+
+  UFUNCTION()
+    void EndAttack();
+
+  UFUNCTION()
+    void SwitchCrouched();
+
+  UFUNCTION()
+    void Run();
+
+  UFUNCTION()
+    void StopRun();
+
+  UFUNCTION()
+    void Zoom(float value);
+private:
+
+  bool dead;
 
 protected:
 	// APawn interface
