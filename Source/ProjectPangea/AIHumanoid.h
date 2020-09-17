@@ -4,15 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Jobs.h"
 #include "AIHumanoid.generated.h"
 
-UENUM()
-enum JobRole
-{
-	Gatherer = 0,
-	Trader,
-	JOB_ROLE_MAX,
-};
 
 UCLASS()
 class PROJECTPANGEA_API AAIHumanoid : public APawn
@@ -36,20 +30,4 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Basic Information")
 	FString NPC_Name;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Job Role")
-	TEnumAsByte<JobRole> jobRole;
-
-	UFUNCTION(BlueprintCallable, Category = "Class Actions")
-	void PerformJob();
-
-
-	typedef void(AAIHumanoid::*Job)(void);
-	TArray<Job> JobArray;
-
-	void InitJobs();
-
-	virtual void Gather();
-	virtual void Trade();
-
 };
