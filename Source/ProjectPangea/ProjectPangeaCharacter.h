@@ -4,6 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+
+#include "LevelStreamerActor.h"
+#include "StreamingVolumesData.h"
+
 #include "ProjectPangeaCharacter.generated.h"
 
 UCLASS(config=Game)
@@ -28,6 +32,11 @@ public:
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
+
+    UPROPERTY(EditAnywhere)
+    ALevelStreamerActor * LevelStreamingActor;
+    UPROPERTY(EditAnywhere)
+    AStreamingVolumesData * streamingVolumeData;
 
 protected:
 
@@ -57,6 +66,12 @@ protected:
 
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
+
+
+    /** Entering room **/
+    void EnterRoom();
+    /** Exiting room **/
+    void ExitRoom();
 
 protected:
 	// APawn interface

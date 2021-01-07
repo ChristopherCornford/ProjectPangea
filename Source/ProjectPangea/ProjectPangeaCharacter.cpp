@@ -56,6 +56,9 @@ void AProjectPangeaCharacter::SetupPlayerInputComponent(class UInputComponent* P
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+    PlayerInputComponent->BindAction("EnterRoom", IE_Pressed, this, &AProjectPangeaCharacter::EnterRoom); 
+    //PlayerInputComponent->BindAction("EnterRoom", IE_Released, this, &AProjectPangeaCharacter::ExitRoom);
+    PlayerInputComponent->BindAction("ExitRoom", IE_Pressed, this, &AProjectPangeaCharacter::ExitRoom);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AProjectPangeaCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AProjectPangeaCharacter::MoveRight);
@@ -131,4 +134,91 @@ void AProjectPangeaCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
+}
+
+
+
+void AProjectPangeaCharacter::EnterRoom()
+{
+    // logging
+    FString debugStr = FString(TEXT("Loading next room!"));
+    if (LevelStreamingActor == NULL)
+    {
+        debugStr += FString(TEXT("\n\t")) + FString(TEXT("Note: NO STREAMING VOLUME SET!"));
+    }
+    if (streamingVolumeData == NULL)
+    {
+        debugStr += FString(TEXT("\n\t")) + FString(TEXT("Note: VOLUME DATA CLASS NOT SET!"));
+    }
+    UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
+    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, debugStr);
+
+    // loading using volume data
+    /*
+    if (LevelStreamingActor != NULL && LevelStreamingActor->isInZone && LevelStreamingActor->LevelToLoad != "")
+    {
+    }
+    */
+
+    // loading using streaming data class
+    if (streamingVolumeData != NULL)
+    {
+        // loading
+        if (streamingVolumeData->levelToLoad != "")
+        {
+            FLatentActionInfo LatentInfo;
+            UGameplayStatics::LoadStreamLevel(this, streamingVolumeData->levelToLoad, true, true, LatentInfo);
+
+            // position change
+            FVector pos_room2 = FVector(-160.0f, 90.0f, 267.8f);
+            FRotator rot_room2 = FRotator(0.0f, 0.0f, 0.0f);
+            //SetActorLocation(pos_room2);
+            //SetActorRotation(rot_room2);
+        }
+
+        // unloading
+        if (streamingVolumeData->levelToUnload != "")
+        {
+            // queue the unload. cannot unload immediately after load/another unload
+            streamingVolumeData->queueUnload(streamingVolumeData->levelToUnload);
+        }
+    }
+}
+
+
+
+void AProjectPangeaCharacter::ExitRoom()
+{
+
+    /*
+    FString debugStr = FString(TEXT("Closing room!"));
+    if (LevelStreamingActor != NULL) {
+        debugStr += FString(TEXT("\n\t")) + FString(TEXT("LevelStreamingActor->isInZone: ")) + (LevelStreamingActor->isInZone ? TEXT("true") : TEXT("false"));
+    }
+    else {
+        debugStr += FString(TEXT("\n\t")) + FString(TEXT("Note: NO STREAMING VOLUME SET!"));
+    }
+    UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
+    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, debugStr);
+
+    if (LevelStreamingActor != NULL && !LevelStreamingActor->isInZone && LevelStreamingActor->LevelToLoad != "")
+    {
+        // unloading
+        FLatentActionInfo LatentInfo;
+        //UGameplayStatics::UnloadStreamLevel(this, LevelStreamingActor->LevelToLoad, LatentInfo);
+        UGameplayStatics::UnloadStreamLevel(this, LevelStreamingActor->LevelToLoad, LatentInfo, true);
+
+        /////////// test
+        debugStr = FString(TEXT("So here it works...."));
+        debugStr += FString(TEXT("\n\t")) + FString(TEXT("LevelStreamingActor->LevelToLoad: ")) + LevelStreamingActor->LevelToLoad.ToString();
+        UE_LOG(LogClass, Log, TEXT("%s"), *debugStr);
+        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, debugStr);
+
+        // position change
+        FVector pos_room1 = FVector(-700.0f, 90.0f, 267.8f);
+        FRotator rot_room1 = FRotator(0.0f, 180.0f, 0.0f);
+        //SetActorLocation(pos_room1);
+        //SetActorRotation(rot_room1);
+    }
+    */
 }
