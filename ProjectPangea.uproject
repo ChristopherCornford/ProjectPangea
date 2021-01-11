@@ -22,6 +22,18 @@
 				"Mac",
 				"Linux"
 			]
+		},
+		{
+			"Name": "UEAnimaLoader",
+			"Enabled": false
+		},
+		{
+			"Name": "Anima4DUnrealPlugin",
+			"Enabled": false
+		},
+		{
+			"Name": "SunPosition",
+			"Enabled": true
 		}
 	]
 }
