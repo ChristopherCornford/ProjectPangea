@@ -7,6 +7,8 @@
 #include "Components/InputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
+#include "Inventory/InventoryComponent.h"
+#include "BaseItem.h"
 #include "GameFramework/SpringArmComponent.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -43,6 +45,8 @@ AProjectPangeaCharacter::AProjectPangeaCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	PlayerInventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 }
@@ -59,6 +63,10 @@ void AProjectPangeaCharacter::SetupPlayerInputComponent(class UInputComponent* P
     PlayerInputComponent->BindAction("EnterRoom", IE_Pressed, this, &AProjectPangeaCharacter::EnterRoom); 
     //PlayerInputComponent->BindAction("EnterRoom", IE_Released, this, &AProjectPangeaCharacter::ExitRoom);
     PlayerInputComponent->BindAction("ExitRoom", IE_Pressed, this, &AProjectPangeaCharacter::ExitRoom);
+
+	PlayerInputComponent->BindAction("OpenInventory", IE_Pressed, this, &AProjectPangeaCharacter::OpenInventory);
+
+	PlayerInputComponent->BindAction("PlayerInteract", IE_Pressed, this, &AProjectPangeaCharacter::PlayerInteract);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AProjectPangeaCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AProjectPangeaCharacter::MoveRight);
@@ -221,4 +229,29 @@ void AProjectPangeaCharacter::ExitRoom()
         //SetActorRotation(rot_room1);
     }
     */
+}
+
+void AProjectPangeaCharacter::PlayerInteract()
+{
+	TArray<AActor*> Actors;
+
+	GetOverlappingActors(Actors);
+
+	UE_LOG(LogTemp, Warning, TEXT("Overlapping Actors: %i"), Actors.Num());
+
+	// Momentary functionality to check that the system inventory works. Go through all overlapping actors and check if they are items. 
+	for (auto actor : Actors)
+	{
+		ABaseItem* Item = Cast<ABaseItem>(actor);
+
+		if (Item)
+		{
+			Item->Destroy();
+			UE_LOG(LogTemp, Warning, TEXT("Item destroyed"));
+		}
+	}
+}
+
+void AProjectPangeaCharacter::OpenInventory()
+{
 }

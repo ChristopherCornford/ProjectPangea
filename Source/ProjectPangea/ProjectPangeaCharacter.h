@@ -38,6 +38,9 @@ public:
     UPROPERTY(EditAnywhere)
     AStreamingVolumesData * streamingVolumeData;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
+	class UInventoryComponent* PlayerInventory;
+
 protected:
 
 	/** Resets HMD orientation in VR. */
@@ -72,6 +75,14 @@ protected:
     void EnterRoom();
     /** Exiting room **/
     void ExitRoom();
+
+private:
+	
+	//This function will be called when player clicks the PlayerAction Button set on the input section
+	void PlayerInteract();
+
+	//This function will open the main inventory
+	void OpenInventory();
 
 protected:
 	// APawn interface
