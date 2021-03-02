@@ -24,8 +24,7 @@ void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	PrepareInventory();
 }
 
 // Called every frame
@@ -34,5 +33,48 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+bool UInventoryComponent::AddToInventory(FSlotInfo NewContent)
+{
+	// TODO: At the moment it will always return true. 
+	if (NewContent.ItemStructure.bStackable)
+	{
+
+	}
+	else
+	{
+		CreateStack(NewContent);
+	}
+
+	return true;
+}
+
+void UInventoryComponent::PrepareInventory()
+{
+	Inventory.Reserve(NumberOfSlots);
+
+	UE_LOG(LogTemp, Warning, TEXT("Inventory Elements: %i"), Inventory.Num());
+
+}
+
+void UInventoryComponent::CreateStack(const FSlotInfo NewContent)
+{
+	FSlotInfo EmptySlot;
+	int32 ItemIndex = 0;
+	
+	Inventory.Add(NewContent);
+	/*for (auto Item : Inventory)
+	{
+		if(Item.ItemStructure)
+	}
+	if (Inventory.Find(EmptySlot, ItemIndex))
+	{
+		Inventory.Insert(NewContent, ItemIndex);
+	}*/
+
+	
+
+	
 }
 

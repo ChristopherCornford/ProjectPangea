@@ -83,14 +83,11 @@ protected:
 
 private:
 	
-	//This function will be called when player clicks the PlayerAction Button set on the input section
+	//Tries to interact when interact input key (E) is pressed. 
 	void PlayerInteract();
 
 	//This function will open the main inventory
 	void OpenInventory();
-
-	//This function will close the main inventory
-	//void CloseInventory();
 
 protected:
 	// APawn interface

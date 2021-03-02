@@ -11,29 +11,29 @@ struct FItemInfo
 {
 	GENERATED_BODY()
 
-		UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
-		FText Name;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
+	FText Name;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
-		bool bStackable;
+	bool bStackable;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
-		class UTexture2D* ItemThumbnail;
+	class UTexture2D* ItemThumbnail;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
-		FText Description;
+	FText Description;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
-		bool bIsConsumible;
+	bool bIsConsumible;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
-		int32 MaxStackSize;
+	int32 MaxStackSize;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
-		float Durability;
+	float Durability;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
-		class AActor* ItemToStore;
+	class AActor* ItemToStore;
 };
 
 UCLASS()
@@ -49,14 +49,20 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Information")
-	FItemInfo ItemInformation;
+	
 
 	//Should be a pure virtual function. 
 	virtual void Interact();
 
 public:	
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Information")
+	FItemInfo ItemInformation;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	/*Get item information*/
+	FORCEINLINE FItemInfo GetItemInformation() const { return ItemInformation; };
 
 };

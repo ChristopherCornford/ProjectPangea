@@ -69,6 +69,8 @@ void AProjectPangeaCharacter::SetupPlayerInputComponent(class UInputComponent* P
 
 	PlayerInputComponent->BindAction("PlayerInteract", IE_Pressed, this, &AProjectPangeaCharacter::PlayerInteract);
 
+
+
 	PlayerInputComponent->BindAxis("MoveForward", this, &AProjectPangeaCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AProjectPangeaCharacter::MoveRight);
 
@@ -247,8 +249,17 @@ void AProjectPangeaCharacter::PlayerInteract()
 
 		if (Item)
 		{
-			Item->Destroy();
-			UE_LOG(LogTemp, Warning, TEXT("Item destroyed"));
+			//We create the new slot info to add
+			FSlotInfo NewSlotInfo;
+			NewSlotInfo.ItemStructure = Item->ItemInformation;
+			NewSlotInfo.Quantity = 1; 
+
+			//Add info and destroy the item
+			if (PlayerInventory->AddToInventory(NewSlotInfo))
+			{
+				Item->Destroy();
+				UE_LOG(LogTemp, Warning, TEXT("Item destroyed"));
+			}
 		}
 	}
 }
