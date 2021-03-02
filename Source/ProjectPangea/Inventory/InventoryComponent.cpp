@@ -10,13 +10,12 @@ UInventoryComponent::UInventoryComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
-
 	//Name of the inventory
-	InventoryName = FText::FromString("Backpack");
+	InventoryName = FText::FromString("Inventory");
 
 	//Number of Slots Inside the Backpack
 	NumberOfSlots = 16;
+
 }
 
 
@@ -28,7 +27,6 @@ void UInventoryComponent::BeginPlay()
 	// ...
 	
 }
-
 
 // Called every frame
 void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

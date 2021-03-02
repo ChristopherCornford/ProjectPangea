@@ -33,14 +33,19 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	/*This name will appear as the inventory name*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
 	FText InventoryName;
 
+	/*Number of slots the inventory is going to have*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
 	int32 NumberOfSlots;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
 	TArray<FSlotInfo> Inventory;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	FVector2D ScreenOffsetPosition;
 
 public:	
 	// Called every frame

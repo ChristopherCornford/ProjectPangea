@@ -41,6 +41,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
 	class UInventoryComponent* PlayerInventory;
 
+public:
+
+	UPROPERTY(BlueprintReadOnly, Category = "Controller")
+	class AProjectPangeaController* PlayerController;
+
 protected:
 
 	/** Resets HMD orientation in VR. */
@@ -83,6 +88,9 @@ private:
 
 	//This function will open the main inventory
 	void OpenInventory();
+
+	//This function will close the main inventory
+	//void CloseInventory();
 
 protected:
 	// APawn interface

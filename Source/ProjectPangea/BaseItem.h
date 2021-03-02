@@ -30,6 +30,9 @@ struct FItemInfo
 		int32 MaxStackSize;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
+		float Durability;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
 		class AActor* ItemToStore;
 };
 

@@ -12,4 +12,14 @@ AProjectPangeaGameMode::AProjectPangeaGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+
+	//PlayerControllerClass = AProjectPangeaController::StaticClass();
+	
+ /*	static ConstructorHelpers::FClassFinder<APlayerController> ControllerClassAsset(TEXT("/Game/Blueprints/BP_ProjectPangeaController"));
+	if (ControllerClassAsset.Succeeded())
+	{
+		PlayerControllerClass = ControllerClassAsset.Class;
+		UE_LOG(LogTemp, Warning, TEXT("PlayerController set correctly"));
+	}*/
+	
 }

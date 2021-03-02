@@ -10,6 +10,7 @@
 #include "Inventory/InventoryComponent.h"
 #include "BaseItem.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "ProjectPangeaController.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AProjectPangeaCharacter
@@ -254,4 +255,8 @@ void AProjectPangeaCharacter::PlayerInteract()
 
 void AProjectPangeaCharacter::OpenInventory()
 {
+	if (PlayerController)
+	{
+		PlayerController->ToggleInventory();
+	}
 }
