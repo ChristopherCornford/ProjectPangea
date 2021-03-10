@@ -66,3 +66,5 @@ public:
 	FORCEINLINE FItemInfo GetItemInformation() const { return ItemInformation; };
 
 };
+
+

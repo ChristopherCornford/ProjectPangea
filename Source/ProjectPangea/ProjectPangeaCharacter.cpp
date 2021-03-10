@@ -252,7 +252,7 @@ void AProjectPangeaCharacter::PlayerInteract()
 			//We create the new slot info to add
 			FSlotInfo NewSlotInfo;
 			NewSlotInfo.ItemStructure = Item->ItemInformation;
-			NewSlotInfo.Quantity = 1; 
+			NewSlotInfo.Quantity = 3; 
 
 			//Add info and destroy the item
 			if (PlayerInventory->AddToInventory(NewSlotInfo))

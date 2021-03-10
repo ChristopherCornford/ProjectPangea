@@ -18,6 +18,27 @@ struct FSlotInfo
 	UPROPERTY(BlueprintReadOnly, Category = "Inventory")
 	int32 Quantity;
 
+	FSlotInfo()
+	{
+		Quantity = 0; 
+	}
+};
+
+USTRUCT()
+struct FPartialStackCheck
+{
+	GENERATED_BODY()
+
+	bool bHasPartialCheck;
+
+	int32 StackFoundIndex;
+
+	FPartialStackCheck()
+	{
+		bHasPartialCheck = false;
+
+		StackFoundIndex = 0; 
+	}
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -53,18 +74,27 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	/*Adds new information to the inventory
-	* @param NewContent - The new slot information to add to the inventory. 
-	  @return It return whether or not something has been added to the inventory. 
+	* @param NewContent - The new slot information to add to the inventory
+	  @return It return whether or not something has been added to the inventory
 	*/
 	bool AddToInventory(FSlotInfo NewContent);
 
-	//Set the array size to the number of slots.
+	//Set the array size to the number of slots
 	void PrepareInventory();
 
-	/*Fills the new stack with the content given. 
-	* @param NewContent - The new slot information to add to the inventory.
+	/*Check it there is an existing stack 
+	* @param NewContent - The slot that we want to check
+	*/
+	FPartialStackCheck HasPartialStack(FSlotInfo NewContent);
+
+	/*Fills the new stack with the content given
+	* @param NewContent - The new slot information to add to the inventory
 	*/
 	void CreateStack(const FSlotInfo NewContent);
 
-	
+	/*
+	* @param NewContent - The stack we want to add
+	* @param SlotIndex - The existing slot where we want to add the new content
+	*/
+	bool AddToStack(FSlotInfo NewContent, int32 SlotIndex);
 };
